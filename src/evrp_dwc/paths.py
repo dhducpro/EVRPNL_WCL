@@ -8,5 +8,4 @@ DATA_DIR = PACKAGE_ROOT / "data"
 BENCHMARK_XML_DIR = DATA_DIR / "benchmark_xml"
 WIRELESS_INSTANCES_DIR = DATA_DIR / "wireless_instances"
 RESULTS_RAW_DIR = PACKAGE_ROOT / "results_raw"
-FIGURES_GENERATED_DIR = PACKAGE_ROOT / "figures_generated"
-
+TABLES_DIR = PACKAGE_ROOT / "tables"

@@ -8,7 +8,7 @@ import seaborn as sns
 
 ROOT = Path(__file__).resolve().parents[1]
 RESULTS = ROOT / "results_raw"
-OUT_DIR = ROOT / "figures_generated"
+OUT_DIR = ROOT / "figures"
 OUT_DIR.mkdir(parents=True, exist_ok=True)
 
 sns.set_theme(style="whitegrid", context="talk")
@@ -124,15 +124,131 @@ def plot_omega_sensitivity(omega: pd.DataFrame) -> None:
     plt.close(fig)
 
 
+def build_single_placement_diagnostics(
+    omega_raw: pd.DataFrame,
+    baseline_cost_map: dict[str, float],
+    baseline_vehicle_map: dict[str, float],
+    omega_value: float = 0.9,
+    placement_seed: int = 20240528,
+) -> pd.DataFrame:
+    single = omega_raw[
+        (pd.to_numeric(omega_raw["omega"], errors="coerce") == omega_value)
+        & (pd.to_numeric(omega_raw["placement_seed"], errors="coerce") == placement_seed)
+    ].copy()
+    single = add_reduction(single, baseline_cost_map)
+    single["baseline_vehicles"] = single["instance"].map(baseline_vehicle_map)
+    if single["baseline_vehicles"].isna().any():
+        missing = single.loc[single["baseline_vehicles"].isna(), "instance"].unique()
+        raise ValueError(f"Missing baseline vehicle rows for: {missing}")
+    single["vehicles"] = pd.to_numeric(single["vehicles"], errors="coerce")
+    single["vehicle_reduction"] = single["baseline_vehicles"] - single["vehicles"]
+    single["coverage"] = pd.to_numeric(single["coverage"], errors="coerce")
+    return single
+
+
+def plot_vehicle_reduction_coverage(single: pd.DataFrame) -> None:
+    sizes = [10, 20, 40]
+    coverages = [0.1, 0.2, 0.3]
+
+    fig, axes = plt.subplots(1, 3, figsize=(15, 4), dpi=150)
+    for ax, size in zip(axes, sizes):
+        size_data = single[single["n_customers"] == size]
+        counts = []
+        labels = []
+        for cov in coverages:
+            cov_data = size_data[size_data["coverage"] == cov]
+            counts.append(int((cov_data["vehicle_reduction"] > 0).sum()))
+            labels.append(f"{int(cov * 100)}%")
+
+        bars = ax.bar(
+            range(len(coverages)),
+            counts,
+            color="#2E86AB",
+            alpha=0.75,
+            edgecolor="black",
+            linewidth=1.2,
+            width=0.6,
+        )
+        for bar, count in zip(bars, counts):
+            ax.text(
+                bar.get_x() + bar.get_width() / 2,
+                bar.get_height(),
+                f"{count}/20",
+                ha="center",
+                va="bottom",
+                fontweight="bold",
+                fontsize=10,
+            )
+        ax.set_ylabel("Instances with Fleet Reduction")
+        ax.set_xlabel("DWC coverage")
+        ax.set_title(f"{size} Customers")
+        ax.set_xticks(range(len(coverages)))
+        ax.set_xticklabels(labels)
+        ax.set_ylim(top=22)
+        ax.grid(True, alpha=0.3, axis="y")
+
+    fig.tight_layout()
+    fig.savefig(OUT_DIR / "fig3_vehicle_reduction_coverage.png", bbox_inches="tight")
+    plt.close(fig)
+
+
+def plot_heatmap_cost(single: pd.DataFrame) -> None:
+    pivot = single.pivot_table(
+        values="reduction_pct",
+        index="n_customers",
+        columns="coverage",
+        aggfunc="mean",
+    )
+    pivot = pivot.reindex([10, 20, 40])
+    pivot = pivot[sorted(pivot.columns)]
+
+    fig, ax = plt.subplots(figsize=(10, 5), dpi=150)
+    vmin = max(0.0, float(pivot.values.min()) - 1.0)
+    vmax = float(pivot.values.max()) + 1.0
+    im = ax.imshow(pivot.values, cmap="YlGn", aspect="auto", vmin=vmin, vmax=vmax)
+
+    ax.set_xticks(range(len(pivot.columns)))
+    ax.set_xticklabels([f"{int(c * 100)}%" for c in pivot.columns])
+    ax.set_yticks(range(len(pivot.index)))
+    ax.set_yticklabels([f"{int(s)} Customers" for s in pivot.index])
+
+    for i in range(len(pivot.index)):
+        for j in range(len(pivot.columns)):
+            ax.text(
+                j,
+                i,
+                f"{pivot.values[i, j]:.2f}%",
+                ha="center",
+                va="center",
+                color="black",
+                fontweight="bold",
+                fontsize=11,
+            )
+
+    ax.set_xlabel("DWC coverage")
+    ax.set_ylabel("Problem size")
+    cbar = fig.colorbar(im, ax=ax)
+    cbar.set_label("Cost reduction vs no-DWC baseline (%)")
+
+    fig.tight_layout()
+    fig.savefig(OUT_DIR / "fig4_heatmap_cost.png", bbox_inches="tight")
+    plt.close(fig)
+
+
 def main() -> None:
     no_wireless = load_csv("no_wireless_baseline/no_wireless_all.csv")
     baseline_cost_map = no_wireless.set_index("instance")["best_cost"].to_dict()
+    baseline_vehicle_map = no_wireless.set_index("instance")["vehicles"].to_dict()
 
     multiseed = add_reduction(load_csv("multiseed_replication/multiseed_all.csv"), baseline_cost_map)
-    omega = add_reduction(load_csv("omega_sensitivity/omega_sensitivity_all.csv"), baseline_cost_map)
+    omega_raw = load_csv("omega_sensitivity/omega_sensitivity_all.csv")
+    omega = add_reduction(omega_raw, baseline_cost_map)
+    single = build_single_placement_diagnostics(omega_raw, baseline_cost_map, baseline_vehicle_map)
 
     plot_replication_distribution(multiseed)
     plot_omega_sensitivity(omega)
+    plot_vehicle_reduction_coverage(single)
+    plot_heatmap_cost(single)
     print(f"Wrote figures to {OUT_DIR.relative_to(ROOT)}")
 
 

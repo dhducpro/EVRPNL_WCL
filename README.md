@@ -1,10 +1,10 @@
-# Reproducibility Package for T-ITS-25-11-5675
+# Electric Vehicle Fleet Routing with Nonlinear Station Charging and Dynamic Wireless Lanes
 
 This repository contains the data, code, raw outputs, and verification scripts for:
 
 **Electric Vehicle Fleet Routing with Nonlinear Station Charging and Dynamic Wireless Lanes for Sustainable Urban Logistics**
 
-The package is designed to reproduce the key numerical claims in the revised manuscript without rerunning the full tabu-search campaign.
+The package is designed to reproduce the key numerical claims in the manuscript without rerunning the full tabu-search campaign.
 
 ## Structure
 
@@ -28,7 +28,8 @@ scripts/
   verify_key_results.py
   make_tables.py
   make_figures.py
-figures_generated/
+figures/
+tables/
 ```
 
 ## Environment
@@ -76,17 +77,28 @@ To regenerate CSV versions of the manuscript tables:
 python scripts/make_tables.py
 ```
 
-To regenerate the two main revision figures that are computed directly from the multi-seed and omega-sensitivity CSV files:
+This script writes the following table files to `tables/`:
+
+- `table_validation.csv`
+- `table_multiseed_coverage.csv`
+- `table_multiseed_by_size_coverage.csv`
+- `table_omega_sensitivity.csv`
+- `table_ablation_summary.csv`
+
+To regenerate the figures computed directly from the multi-seed and omega-sensitivity CSV files:
 
 ```bash
 python scripts/make_figures.py
 ```
 
-Generated tables and figures are written to `figures_generated/`.
-This directory also includes the two legacy single-placement diagnostic figures retained in the manuscript for backward comparability:
+This script writes the following figures to `figures/`:
 
+- `fig1_replication_distribution.png`
+- `fig2_omega_sensitivity_trend.png`
 - `fig3_vehicle_reduction_coverage.png`
 - `fig4_heatmap_cost.png`
+
+Figures 1 and 2 use the multi-seed replication and omega-sensitivity outputs. Figures 3 and 4 are single-placement diagnostics generated from `omega_sensitivity_all.csv` by selecting `omega = 0.9` and `placement_seed = 20240528`, then comparing against `no_wireless_all.csv`.
 
 ## Source Code Layout
 
@@ -107,7 +119,7 @@ This directory also includes the two legacy single-placement diagnostic figures 
   - `omega_sensitivity/`
   - `ablation_frvcp/`
 
-The raw outputs included here are sufficient to reproduce the revised manuscript tables. Rerunning `experiments/full_multiseed_sensitivity_ablation_frvcp.ipynb` may create additional intermediate CSV files.
+The raw outputs included here are sufficient to reproduce the manuscript tables. Rerunning `experiments/full_multiseed_sensitivity_ablation_frvcp.ipynb` may create additional intermediate CSV files.
 
 ## Re-running Wireless Placement Generation
 
@@ -117,16 +129,4 @@ The wireless placement files can be regenerated with:
 python src/generate_wireless_instances.py
 ```
 
-The placement rule is:
-
-```text
-instance_selection_seed = SHA256("{instance_name}|{placement_seed}") first 8 bytes mod 2^32
-```
-
 The script shuffles customer-to-customer undirected pairs and selects `floor(coverage * number_of_pairs)` pairs, represented symmetrically as directed arcs.
-
-The manuscript uses placement seeds:
-
-```text
-20240528, 20240529, 20240530, 20240531, 20240532
-```

@@ -5,7 +5,7 @@ import pandas as pd
 
 ROOT = Path(__file__).resolve().parents[1]
 RESULTS = ROOT / "results_raw"
-OUT_DIR = ROOT / "figures_generated"
+OUT_DIR = ROOT / "tables"
 OUT_DIR.mkdir(parents=True, exist_ok=True)
 
 
@@ -75,6 +75,24 @@ def multiseed_table(multiseed: pd.DataFrame) -> pd.DataFrame:
     return pd.DataFrame(rows)
 
 
+def multiseed_by_size_coverage_table(multiseed: pd.DataFrame) -> pd.DataFrame:
+    rows = []
+    multiseed = multiseed.copy()
+    multiseed["n_customers"] = pd.to_numeric(multiseed["n_customers"], errors="coerce").astype(int)
+    for (size, coverage), group in multiseed.groupby(["n_customers", "coverage_pct"], sort=True):
+        rows.append(
+            {
+                "size_customers": int(size),
+                "coverage": coverage,
+                "mean_pct": group["reduction_pct"].mean(),
+                "std_pct": group["reduction_pct"].std(ddof=1),
+                "ci95_pct": ci95(group["reduction_pct"]),
+                "fleet_reduction_rate_pct": group["fleet_reduced"].mean() * 100,
+            }
+        )
+    return pd.DataFrame(rows)
+
+
 def omega_table(omega: pd.DataFrame) -> pd.DataFrame:
     rows = []
     for value, group in omega.groupby("omega", sort=True):
@@ -107,6 +125,7 @@ def main() -> None:
     tables = {
         "table_validation.csv": validation_table(),
         "table_multiseed_coverage.csv": multiseed_table(multiseed),
+        "table_multiseed_by_size_coverage.csv": multiseed_by_size_coverage_table(multiseed),
         "table_omega_sensitivity.csv": omega_table(omega),
         "table_ablation_summary.csv": ablation,
     }
