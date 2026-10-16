@@ -9,11 +9,16 @@ This module contains all the core components for solving FRVCP using Tabu Search
 """
 
 import copy
+import hashlib
 import math
 import random
+import time
 from collections import deque
+from contextlib import contextmanager
 from dataclasses import dataclass
 from typing import Any, Dict, List, Optional, Sequence, Set, Tuple
+
+from .frvcp_dwc import DwcEnergyBounds, DwcFrvcpSolver
 
 # Note: These imports assume the existence of 'core' and 'solver' modules
 # Users should ensure these are available in their environment
@@ -53,6 +58,7 @@ class RouteEvaluationCache:
         self.process_times = instance_obj.process_times
         self.max_duration = instance_obj.t_max
         self.max_charge = instance_obj.max_q
+        self._frvcp_energy_bounds = DwcEnergyBounds(instance_obj)
 
         self.charging_station_ids = [
             node.node_id
@@ -61,6 +67,29 @@ class RouteEvaluationCache:
         ]
         self._energy_path_cache: Dict[Tuple[int, int], bool] = {}
         self._cache: Dict[Tuple[int, ...], Tuple[float, Optional[List[Tuple[int, Optional[float]]]]]] = {}
+        self._evaluation_phase = "search"
+        self.reset_statistics()
+
+    def reset_statistics(self) -> None:
+        self._frvcp_stats = {f"frvcp_{phase}_{metric}": 0 for phase in
+                             ("construction", "search") for metric in ("calls", "time_sec")}
+
+    @contextmanager
+    def evaluation_phase(self, phase):
+        if phase not in {"construction", "search"}:
+            raise ValueError("Unknown evaluation phase")
+        previous = self._evaluation_phase
+        self._evaluation_phase = phase
+        try:
+            yield
+        finally:
+            self._evaluation_phase = previous
+
+    def frvcp_statistics(self):
+        stats = dict(self._frvcp_stats)
+        stats["frvcp_calls"] = sum(stats[f"frvcp_{p}_calls"] for p in ("construction", "search"))
+        stats["frvcp_total_time_sec"] = sum(stats[f"frvcp_{p}_time_sec"] for p in ("construction", "search"))
+        return stats
 
     def clear(self) -> None:
         self._cache.clear()
@@ -141,19 +170,24 @@ class RouteEvaluationCache:
             if not self.quick_feasible_sequence(sequence):
                 self._cache[key] = (math.inf, None)
             else:
-                from frvcpy import solver
-                frvcp_solver = solver.Solver(
+                frvcp_solver = DwcFrvcpSolver(
                     copy.deepcopy(self._base_instance),
                     list(sequence),
                     self.initial_soc,
                     multi_insert=self.allow_multi_insert,
+                    energy_bounds=self._frvcp_energy_bounds,
                 )
+                started = time.perf_counter()
                 try:
                     duration, plan = frvcp_solver.solve()
                     self._cache[key] = (duration, plan)
                 except ValueError as exc:
                     print(f"Route evaluation failed: {exc}")
                     self._cache[key] = (math.inf, None)
+                finally:
+                    phase = self._evaluation_phase
+                    self._frvcp_stats[f"frvcp_{phase}_calls"] += 1
+                    self._frvcp_stats[f"frvcp_{phase}_time_sec"] += time.perf_counter() - started
         return self._cache[key]
 
     def evaluate_customers(
@@ -587,6 +621,12 @@ def canonical_solution_signature(routes: Sequence[Sequence[int]]) -> Tuple[Tuple
     return tuple(sorted(tuple(route) for route in routes if route))
 
 
+def changing_moves(moves: List[Move], routes: Sequence[Sequence[int]]) -> List[Move]:
+    """Exclude unchanged solutions, including permutations of identical vehicles."""
+    current = canonical_solution_signature(routes)
+    return [move for move in moves if canonical_solution_signature(move.routes) != current]
+
+
 def subsample_moves(moves: List[Move], max_moves: int, rng: random.Random) -> List[Move]:
     if len(moves) <= max_moves:
         return moves
@@ -599,7 +639,7 @@ class TabuSearchResult:
     details: List[RouteDetail]
     history: List[Dict[str, Any]]
     best_cost: float
-    stats: Dict[str, int]
+    stats: Dict[str, Any]
 
 
 class TabuSearch:
@@ -671,6 +711,7 @@ class TabuSearch:
                 or_opt_moves = generate_or_opt_moves(routes, max_length=3)
             moves += or_opt_moves + generate_intra_2opt_moves(routes) + generate_intra_swap_moves(routes)
 
+        moves = changing_moves(moves, routes)
         if self.max_moves_per_iter > 0:
             moves = subsample_moves(moves, self.max_moves_per_iter, self.rng)
         return moves
@@ -680,7 +721,7 @@ class TabuSearch:
         moves = generate_relocate_moves(routes) + generate_cross_moves(routes) + generate_exchange_moves(routes)
         if self.use_extended_operators:
             moves += generate_or_opt_moves(routes, max_length=3) + generate_intra_2opt_moves(routes) + generate_intra_swap_moves(routes)
-        return moves
+        return changing_moves(moves, routes)
 
     def _shake(
         self,
@@ -737,6 +778,7 @@ class TabuSearch:
         # improving the global incumbent.
         non_improving_iters = 0
         iteration = 0
+        iterations_attempted = 0
         while iteration < self.max_iter:
             moves = self._generate_moves(current_routes)
 
@@ -744,6 +786,7 @@ class TabuSearch:
             if len(moves) == 0:
                 print(f"No admissible moves at iteration {iteration}. Stopping search.")
                 break
+            iterations_attempted += 1
 
             best_move_data: Optional[
                 Tuple[
@@ -831,6 +874,10 @@ class TabuSearch:
                         current_cost = shaken_cost
                         current_details = shaken_details
                         current_arcs = routes_to_arcs(current_routes)
+                        if current_cost < best_cost - 1e-6:
+                            best_cost = current_cost
+                            best_routes = copy.deepcopy(current_routes)
+                            best_details = copy.deepcopy(current_details)
                     self.stats["shakes"] += 1
 
                     # Reset stagnation after perturbation.
@@ -858,6 +905,10 @@ class TabuSearch:
                 if detail.customers:
                     clean_details.append(copy.deepcopy(detail))
 
+        self.stats.update(self.cache.frvcp_statistics())
+        self.stats.update(iterations_total=iterations_attempted, starts_completed=1,
+                          best_start_iterations=iterations_attempted,
+                          accepted_iterations=len(self.history))
         return TabuSearchResult(clean_routes, clean_details, self.history, best_cost, self.stats)
 
 
@@ -887,23 +938,38 @@ def multi_start_tabu_search(
     """
     best_result: Optional[TabuSearchResult] = None
     base_seed = tabu_kwargs.get("rng_seed", 0)
+    if num_runs < 1:
+        raise ValueError("num_runs must be positive")
+    counter_keys = ("moves_generated", "moves_evaluated", "moves_skipped_validity", "moves_skipped_tabu", "shakes")
+    totals = dict.fromkeys(counter_keys, 0)
+    iterations_total = 0
+    start_seeds = []
+    cache.reset_statistics()
 
     for run in range(num_runs):
-        print(f"\n=== Multi-start run {run + 1}/{num_runs} (seed={base_seed + run}) ===")
-        rng = random.Random(base_seed + run)
+        digest = hashlib.sha256(f"tabu|{base_seed}|{run}".encode("utf-8")).digest()
+        start_seed = int.from_bytes(digest[:8], "big") % (2**32)
+        start_seeds.append(start_seed)
+        print(f"\n=== Multi-start run {run + 1}/{num_runs} (seed={start_seed}) ===")
+        rng = random.Random(start_seed)
         cache.clear()
-        initial_routes = build_initial_solution(customers, cache, rng, randomized=True, rcl_size=5)
-        initial_cost, _ = evaluate_solution(initial_routes, cache)
+        with cache.evaluation_phase("construction"):
+            initial_routes = build_initial_solution(customers, cache, rng, randomized=True, rcl_size=5)
+            initial_cost, _ = evaluate_solution(initial_routes, cache)
         print(f"Initial solution cost: {initial_cost:.4f}")
 
+        run_kwargs = dict(tabu_kwargs, rng_seed=start_seed)
         search = TabuSearch(
             cache=cache,
             all_customers=required_customers,
             neighbor_map=neighbor_map,
             max_moves_per_iter=max_moves_per_iter,
-            **tabu_kwargs,
+            **run_kwargs,
         )
         result = search.run(initial_routes)
+        iterations_total += result.stats["iterations_total"]
+        for key in counter_keys:
+            totals[key] += result.stats[key]
         print(f"Final solution cost: {result.best_cost:.4f}")
         print(
             f"Moves: generated={result.stats['moves_generated']}, evaluated={result.stats['moves_evaluated']}, "
@@ -913,8 +979,13 @@ def multi_start_tabu_search(
 
         if best_result is None or result.best_cost < best_result.best_cost - 1e-6:
             best_result = result
+            best_result.stats["best_start_seed"] = start_seed
             print(f"New incumbent solution found with cost {result.best_cost:.4f}")
 
     if best_result is None:
         raise RuntimeError("Tabu search failed to produce a solution.")
+    best_result.stats.update(totals)
+    best_result.stats.update(cache.frvcp_statistics())
+    best_result.stats.update(iterations_total=iterations_total, starts_completed=num_runs,
+                             start_seeds=start_seeds)
     return best_result

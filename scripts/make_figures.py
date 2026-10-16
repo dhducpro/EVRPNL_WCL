@@ -1,4 +1,5 @@
 from pathlib import Path
+import sys
 
 import numpy as np
 import pandas as pd
@@ -7,11 +8,19 @@ import seaborn as sns
 
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "src"))
+from evrp_dwc.result_statistics import instance_summary, grouped_instance_summary, add_baseline_reductions, check_result_versions
 RESULTS = ROOT / "results_raw"
 OUT_DIR = ROOT / "figures"
 OUT_DIR.mkdir(parents=True, exist_ok=True)
 
 sns.set_theme(style="whitegrid", context="talk")
+
+
+def save_figure(fig, name: str) -> None:
+    for extension in ("png", "pdf"):
+        fig.savefig(OUT_DIR / f"{name}.{extension}", bbox_inches="tight")
+    plt.close(fig)
 
 
 def load_csv(rel_path: str) -> pd.DataFrame:
@@ -66,25 +75,15 @@ def plot_replication_distribution(multiseed: pd.DataFrame) -> None:
     ax.set_ylabel("Cost reduction vs no-DWC baseline (%)")
     ax.axhline(0, color="black", linewidth=1, alpha=0.5)
     fig.tight_layout()
-    fig.savefig(OUT_DIR / "fig1_replication_distribution.png", bbox_inches="tight")
-    plt.close(fig)
+    save_figure(fig, "fig1_replication_distribution")
 
 
 def plot_omega_sensitivity(omega: pd.DataFrame) -> None:
     coverage_order = ["10%", "20%", "30%"]
     palette = {"10%": "#1f77b4", "20%": "#ff7f0e", "30%": "#2ca02c"}
 
-    summary = (
-        omega.groupby(["coverage_pct", "omega"], as_index=False)["reduction_pct"]
-        .agg(["mean", "std", "count"])
-        .reset_index()
-    )
-    summary["ci95"] = 1.96 * summary["std"] / np.sqrt(summary["count"])
-    summary["omega"] = pd.to_numeric(summary["omega"], errors="coerce")
-
-    overall = omega.groupby("omega", as_index=False)["reduction_pct"].agg(["mean", "std", "count"]).reset_index()
-    overall["ci95"] = 1.96 * overall["std"] / np.sqrt(overall["count"])
-    overall["omega"] = pd.to_numeric(overall["omega"], errors="coerce")
+    summary = grouped_instance_summary(omega, ["coverage_pct", "omega"])
+    overall = grouped_instance_summary(omega, "omega")
 
     fig, ax = plt.subplots(figsize=(10.5, 6.5), dpi=150)
     for cov in coverage_order:
@@ -120,8 +119,7 @@ def plot_omega_sensitivity(omega: pd.DataFrame) -> None:
     ax.legend(loc="upper left")
     ax.grid(True, alpha=0.25)
     fig.tight_layout()
-    fig.savefig(OUT_DIR / "fig2_omega_sensitivity_trend.png", bbox_inches="tight")
-    plt.close(fig)
+    save_figure(fig, "fig2_omega_sensitivity_trend")
 
 
 def build_single_placement_diagnostics(
@@ -150,7 +148,7 @@ def plot_vehicle_reduction_coverage(single: pd.DataFrame) -> None:
     sizes = [10, 20, 40]
     coverages = [0.1, 0.2, 0.3]
 
-    fig, axes = plt.subplots(1, 3, figsize=(15, 4), dpi=150)
+    fig, axes = plt.subplots(1, 3, figsize=(15, 4.8), dpi=150)
     for ax, size in zip(axes, sizes):
         size_data = single[single["n_customers"] == size]
         counts = []
@@ -179,7 +177,7 @@ def plot_vehicle_reduction_coverage(single: pd.DataFrame) -> None:
                 fontweight="bold",
                 fontsize=10,
             )
-        ax.set_ylabel("Instances with Fleet Reduction")
+        ax.set_ylabel("Runs with fewer vehicles" if size == sizes[0] else "", fontsize=16)
         ax.set_xlabel("DWC coverage")
         ax.set_title(f"{size} Customers")
         ax.set_xticks(range(len(coverages)))
@@ -188,8 +186,7 @@ def plot_vehicle_reduction_coverage(single: pd.DataFrame) -> None:
         ax.grid(True, alpha=0.3, axis="y")
 
     fig.tight_layout()
-    fig.savefig(OUT_DIR / "fig3_vehicle_reduction_coverage.png", bbox_inches="tight")
-    plt.close(fig)
+    save_figure(fig, "fig3_vehicle_reduction_coverage")
 
 
 def plot_heatmap_cost(single: pd.DataFrame) -> None:
@@ -203,7 +200,7 @@ def plot_heatmap_cost(single: pd.DataFrame) -> None:
     pivot = pivot[sorted(pivot.columns)]
 
     fig, ax = plt.subplots(figsize=(10, 5), dpi=150)
-    vmin = max(0.0, float(pivot.values.min()) - 1.0)
+    vmin = float(pivot.values.min()) - 1.0
     vmax = float(pivot.values.max()) + 1.0
     im = ax.imshow(pivot.values, cmap="YlGn", aspect="auto", vmin=vmin, vmax=vmax)
 
@@ -228,27 +225,115 @@ def plot_heatmap_cost(single: pd.DataFrame) -> None:
     ax.set_xlabel("DWC coverage")
     ax.set_ylabel("Problem size")
     cbar = fig.colorbar(im, ax=ax)
-    cbar.set_label("Cost reduction vs no-DWC baseline (%)")
+    cbar.set_label("Time reduction (%)")
 
     fig.tight_layout()
-    fig.savefig(OUT_DIR / "fig4_heatmap_cost.png", bbox_inches="tight")
-    plt.close(fig)
+    ax.grid(False)
+    save_figure(fig, "fig4_heatmap_cost")
+
+
+def matched_ablation_deltas(ablation: pd.DataFrame) -> pd.DataFrame:
+    baseline = ablation[ablation["ablation"] == "baseline"]
+    columns = ["best_cost", "vehicles", "solver_time_sec", "frvcp_calls", "frvcp_avg_time_ms"]
+    rows = []
+    for setting in ("no_shaking", "no_extended_operators", "no_candidate_filtering", "no_filter_no_extended"):
+        matched = ablation[ablation["ablation"] == setting].merge(
+            baseline, on="instance", suffixes=("", "_baseline"), validate="one_to_one")
+        if matched.empty:
+            raise ValueError(f"Missing matched ablation results: {setting}")
+        row = {"setting": setting, "n_overlap": len(matched)}
+        for column in columns:
+            reference = matched[f"{column}_baseline"].mean()
+            row[column] = 100 * (matched[column].mean() / reference - 1)
+        rows.append(row)
+    return pd.DataFrame(rows)
+
+
+def plot_ablation(ablation: pd.DataFrame) -> None:
+    deltas = matched_ablation_deltas(ablation)
+    labels = {"no_shaking": "No shaking", "no_extended_operators": "No extended operators",
+              "no_candidate_filtering": "No candidate filtering", "no_filter_no_extended": "No filtering or extended operators"}
+    metrics = {"best_cost": "Cost", "vehicles": "Vehicles", "solver_time_sec": "Solver time", "frvcp_calls": "FRVCP calls"}
+    # Match the three individual-component rows in the manuscript's table.
+    primary = deltas[deltas["setting"] != "no_filter_no_extended"].copy()
+    primary["label"] = primary.apply(lambda row: f"{labels[row['setting']]} (n={row['n_overlap']})", axis=1)
+    long = primary.melt(id_vars=["label"], value_vars=list(metrics), var_name="metric", value_name="delta")
+    long["metric"] = long["metric"].map(metrics)
+    fig, ax = plt.subplots(figsize=(11.2, 6.8), dpi=150)
+    sns.barplot(data=long, x="metric", y="delta", hue="label", ax=ax, errorbar=None)
+    ax.axhline(0, color="black", linewidth=1)
+    ax.set(title="Ablation effects versus matched baseline", xlabel="", ylabel="Change in matched means (%)")
+    ax.legend(title="", loc="lower left")
+    for container in ax.containers:
+        ax.bar_label(container, fmt="%+.2f", fontsize=9, padding=3)
+    ax.margins(y=0.22)
+    fig.tight_layout()
+    save_figure(fig, "fig3_ablation_deltas")
+
+    # Relative axes keep the 20-instance and 60-instance comparisons comparable.
+    fig, ax = plt.subplots(figsize=(11.2, 6.8), dpi=150)
+    colors = sns.color_palette("colorblind", len(deltas))
+    for color, row in zip(colors, deltas.to_dict("records")):
+        ax.scatter(row["solver_time_sec"], row["best_cost"], color=color, s=100,
+                   label=f"{labels[row['setting']]} (n={row['n_overlap']})")
+        ax.annotate(f"({row['solver_time_sec']:+.2f}%, {row['best_cost']:+.2f}%)",
+                    (row["solver_time_sec"], row["best_cost"]), xytext=(8, 8),
+                    textcoords="offset points", fontsize=10)
+    ax.scatter(0, 0, color="black", marker="x", s=80, label="Matched baseline")
+    ax.axhline(0, color="black", linewidth=.8, alpha=.5)
+    ax.axvline(0, color="black", linewidth=.8, alpha=.5)
+    ax.set(title="Ablation quality and runtime changes", xlabel="Change in mean solver time (%)",
+           ylabel="Change in mean routing and charging time (%)")
+    ax.legend(loc="upper left", fontsize=10)
+    ax.margins(x=.25, y=.3)
+    fig.tight_layout()
+    save_figure(fig, "fig3_ablation_quality_time_tradeoff")
+
+
+def plot_scalability(ablation: pd.DataFrame) -> None:
+    baseline = ablation[ablation["ablation"] == "baseline"]
+    by_size = baseline.groupby("n_customers").agg(
+        solver_time=("solver_time_sec", "mean"), search_calls=("frvcp_search_calls", "mean"),
+        iterations=("iterations_done", "mean")).sort_index()
+    by_size["calls_per_iteration"] = by_size["search_calls"] / by_size["iterations"]
+    fig, axes = plt.subplots(1, 2, figsize=(12, 5.2), dpi=150)
+    x = np.arange(len(by_size))
+    for ax, column, ylabel in zip(axes, ["solver_time", "calls_per_iteration"],
+                                  ["Mean solver time (s)", "Search FRVCP calls per iteration"]):
+        bars = ax.bar(x, by_size[column], color="#2E86AB", width=.6)
+        ax.bar_label(bars, fmt="%.2f", fontsize=11, padding=4)
+        ax.set_xticks(x, [str(int(size)) for size in by_size.index])
+        ax.set(xlabel="Number of customers", ylabel=ylabel)
+        ax.margins(y=.2)
+    fig.suptitle("Search workload by instance size (five starts per solve)")
+    fig.tight_layout()
+    save_figure(fig, "fig4_scalability_frvcp")
 
 
 def main() -> None:
+    np.random.seed(20240528)  # Reproducible strip-plot jitter; solver results are unchanged.
     no_wireless = load_csv("no_wireless_baseline/no_wireless_all.csv")
     baseline_cost_map = no_wireless.set_index("instance")["best_cost"].to_dict()
     baseline_vehicle_map = no_wireless.set_index("instance")["vehicles"].to_dict()
 
-    multiseed = add_reduction(load_csv("multiseed_replication/multiseed_all.csv"), baseline_cost_map)
+    multiseed_raw = load_csv("multiseed_replication/multiseed_all.csv")
     omega_raw = load_csv("omega_sensitivity/omega_sensitivity_all.csv")
-    omega = add_reduction(omega_raw, baseline_cost_map)
+    ablation_raw = load_csv("ablation_frvcp/ablation_frvcp_raw.csv")
+    from verify_key_results import validate_current_results, validate_complete_campaign
+    for frame in (no_wireless, multiseed_raw, omega_raw, ablation_raw):
+        validate_current_results(frame)
+    check_result_versions(no_wireless, multiseed_raw, omega_raw, ablation_raw)
+    validate_complete_campaign(no_wireless, multiseed_raw, omega_raw, ablation_raw)
+    multiseed = add_baseline_reductions(multiseed_raw, no_wireless)
+    omega = add_baseline_reductions(omega_raw, no_wireless)
     single = build_single_placement_diagnostics(omega_raw, baseline_cost_map, baseline_vehicle_map)
 
     plot_replication_distribution(multiseed)
     plot_omega_sensitivity(omega)
     plot_vehicle_reduction_coverage(single)
     plot_heatmap_cost(single)
+    plot_ablation(ablation_raw)
+    plot_scalability(ablation_raw)
     print(f"Wrote figures to {OUT_DIR.relative_to(ROOT)}")
 
 

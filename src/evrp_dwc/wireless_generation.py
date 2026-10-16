@@ -21,8 +21,7 @@ MULTISEED_PLACEMENT_SEEDS = [20240528, 20240529, 20240530, 20240531, 20240532]
 OMEGA_LEVELS = [0.3, 0.5, 0.7, 0.9]
 SENSITIVITY_FIXED_SEED = 20240528
 
-MIN_ENERGY_ABS = 500.0
-MIN_ENERGY_FRACTION = 0.05
+from .wireless_model import reduced_energy
 
 
 @dataclass(frozen=True)
@@ -33,6 +32,7 @@ class WirelessGenerationConfig:
     placement_seeds: tuple[int, ...] = tuple(MULTISEED_PLACEMENT_SEEDS)
     omega_levels: tuple[float, ...] = tuple(OMEGA_LEVELS)
     sensitivity_fixed_seed: int = SENSITIVITY_FIXED_SEED
+    base_omega: float = 0.9
 
 
 def instance_selection_seed(instance_name: str, base_seed: int) -> int:
@@ -40,11 +40,6 @@ def instance_selection_seed(instance_name: str, base_seed: int) -> int:
     return int.from_bytes(digest[:8], "big") % (2**32)
 
 
-def reduced_energy(energy: float, omega: float) -> tuple[float, float]:
-    min_allowed = max(MIN_ENERGY_ABS, energy * MIN_ENERGY_FRACTION)
-    target = max(min_allowed, energy * (1.0 - omega))
-    reduction = max(0.0, energy - target)
-    return target, reduction
 
 
 def build_ordered_pairs(
@@ -149,7 +144,7 @@ def generate_wireless_rows(config: WirelessGenerationConfig) -> tuple[
                         }
                         selected_directed_rows.append(directed_row)
 
-                        omega_values = [0.9]
+                        omega_values = [config.base_omega]
                         if seed == config.sensitivity_fixed_seed:
                             omega_values = sorted(set(omega_values + list(config.omega_levels)))
 

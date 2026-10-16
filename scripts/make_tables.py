@@ -1,34 +1,32 @@
+import math
 from pathlib import Path
+import sys
 
 import pandas as pd
 
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "src"))
+from evrp_dwc.result_statistics import instance_summary, grouped_instance_summary, add_baseline_reductions, check_result_versions, ablation_summary
 RESULTS = ROOT / "results_raw"
 OUT_DIR = ROOT / "tables"
 OUT_DIR.mkdir(parents=True, exist_ok=True)
 
 
-def ci95(series: pd.Series) -> float:
-    return 1.96 * series.std(ddof=1) / (len(series) ** 0.5)
-
-
-def add_baseline_reductions(df: pd.DataFrame, baseline: pd.DataFrame) -> pd.DataFrame:
-    merged = df.merge(
-        baseline[["instance", "best_cost", "vehicles"]].rename(
-            columns={"best_cost": "base_cost", "vehicles": "base_vehicles"}
-        ),
-        on="instance",
-        how="left",
-    )
-    merged["reduction_pct"] = (merged["base_cost"] - merged["best_cost"]) / merged["base_cost"] * 100
-    merged["fleet_reduced"] = merged["vehicles"] < merged["base_vehicles"]
-    merged["non_deteriorating"] = merged["reduction_pct"] >= -1e-9
-    return merged
-
-
 def validation_table() -> pd.DataFrame:
-    df = pd.read_csv(RESULTS / "no_wireless_baseline" / "no_wireless_vs_paper_60.csv")
+    comparison_file = RESULTS / "no_wireless_baseline" / "no_wireless_vs_paper_60.csv"
+    reference = pd.read_csv(comparison_file)[["instance", "paper_bks"]]
+    baseline = pd.read_csv(RESULTS / "no_wireless_baseline" / "no_wireless_all.csv")
+    if reference["instance"].duplicated().any() or (reference["paper_bks"] <= 0).any():
+        raise ValueError("Invalid paper reference costs")
+    df = baseline[["instance", "best_cost", "solver_time_sec"]].merge(reference, on="instance", how="left", validate="one_to_one")
+    if df["paper_bks"].isna().any() or not pd.to_numeric(df["best_cost"], errors="raise").map(math.isfinite).all():
+        raise ValueError("Missing paper reference or invalid baseline costs")
+    df["best_cost_round2"] = df["best_cost"].round(2)
+    df["gap_pct_exact"] = (df["best_cost"] - df["paper_bks"]) / df["paper_bks"] * 100
+    df["gap_pct_round2"] = (df["best_cost_round2"] - df["paper_bks"]) / df["paper_bks"] * 100
+    df["status_round2"] = df["gap_pct_round2"].map(lambda gap: "equal" if abs(gap) <= 1e-9 else "improved" if gap < 0 else "worse")
+    df.to_csv(comparison_file, index=False)
     df["n_customers"] = df["instance"].str.extract(r"c(\d+)s", expand=False).astype(int)
     df["gap_pct"] = df["gap_pct_exact"]
     rows = []
@@ -63,9 +61,12 @@ def multiseed_table(multiseed: pd.DataFrame) -> pd.DataFrame:
         rows.append(
             {
                 "coverage": coverage,
-                "mean_pct": group["reduction_pct"].mean(),
+                "mean_pct": instance_summary(group)["mean"],
                 "std_pct": group["reduction_pct"].std(ddof=1),
-                "ci95_pct": ci95(group["reduction_pct"]),
+                "ci95_pct": instance_summary(group)["ci95"],
+                "n_instances": group["instance"].nunique(),
+                "n_runs": len(group),
+                "ci_method": "Student-t across instance means",
                 "min_pct": group["reduction_pct"].min(),
                 "max_pct": group["reduction_pct"].max(),
                 "fleet_reduction_rate_pct": group["fleet_reduced"].mean() * 100,
@@ -84,9 +85,12 @@ def multiseed_by_size_coverage_table(multiseed: pd.DataFrame) -> pd.DataFrame:
             {
                 "size_customers": int(size),
                 "coverage": coverage,
-                "mean_pct": group["reduction_pct"].mean(),
+                "mean_pct": instance_summary(group)["mean"],
                 "std_pct": group["reduction_pct"].std(ddof=1),
-                "ci95_pct": ci95(group["reduction_pct"]),
+                "ci95_pct": instance_summary(group)["ci95"],
+                "n_instances": group["instance"].nunique(),
+                "n_runs": len(group),
+                "ci_method": "Student-t across instance means",
                 "fleet_reduction_rate_pct": group["fleet_reduced"].mean() * 100,
             }
         )
@@ -99,9 +103,12 @@ def omega_table(omega: pd.DataFrame) -> pd.DataFrame:
         rows.append(
             {
                 "omega": value,
-                "mean_pct": group["reduction_pct"].mean(),
+                "mean_pct": instance_summary(group)["mean"],
                 "std_pct": group["reduction_pct"].std(ddof=1),
-                "ci95_pct": ci95(group["reduction_pct"]),
+                "ci95_pct": instance_summary(group)["ci95"],
+                "n_instances": group["instance"].nunique(),
+                "n_runs": len(group),
+                "ci_method": "Student-t across instance means",
                 "min_pct": group["reduction_pct"].min(),
                 "max_pct": group["reduction_pct"].max(),
                 "non_deteriorating": f"{int(group['non_deteriorating'].sum())}/{len(group)}",
@@ -120,7 +127,14 @@ def main() -> None:
         pd.read_csv(RESULTS / "omega_sensitivity" / "omega_sensitivity_all.csv"),
         baseline,
     )
-    ablation = pd.read_csv(RESULTS / "ablation_frvcp" / "ablation_frvcp_summary.csv")
+    ablation_raw = pd.read_csv(RESULTS / "ablation_frvcp" / "ablation_frvcp_raw.csv")
+    from verify_key_results import validate_current_results, validate_complete_campaign
+    for frame in (baseline, multiseed, omega, ablation_raw):
+        validate_current_results(frame)
+    check_result_versions(baseline, multiseed, omega, ablation_raw)
+    validate_complete_campaign(baseline, multiseed, omega, ablation_raw)
+    ablation = ablation_summary(ablation_raw)
+    ablation.to_csv(RESULTS / "ablation_frvcp" / "ablation_frvcp_summary.csv", index=False)
 
     tables = {
         "table_validation.csv": validation_table(),
