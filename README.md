@@ -1,132 +1,29 @@
-# Electric Vehicle Fleet Routing with Nonlinear Station Charging and Dynamic Wireless Lanes
+# EVRPNL-DWC
 
-This repository contains the data, code, raw outputs, and verification scripts for:
+Code and retained results for electric vehicle routing with nonlinear station charging and dynamic wireless charging.
 
-**Electric Vehicle Fleet Routing with Nonlinear Station Charging and Dynamic Wireless Lanes for Sustainable Urban Logistics**
-
-The package is designed to reproduce the key numerical claims in the manuscript without rerunning the full tabu-search campaign.
-
-## Structure
-
-```text
-README.md
-requirements.txt
-data/
-  benchmark_xml/
-  wireless_instances/
-src/
-  evrp_dwc/
-    csv_io.py
-    instance_io.py
-    paths.py
-    tabu_search.py
-    wireless_generation.py
-  generate_wireless_instances.py
-experiments/
-results_raw/
-scripts/
-  verify_key_results.py
-  make_tables.py
-  make_figures.py
-figures/
-tables/
-```
-
-## Environment
-
-The experiments were run with:
-
-- Python 3.11.1
-- `frvcpy` 0.1.1
-- MacBook with Apple M1 processor
-- 8 GB RAM
-
-Install dependencies with:
+## Run
 
 ```bash
-pip install -r requirements.txt
+python -m pip install -r requirements.txt
+python scripts/rebuild_results.py
 ```
 
-If importing package modules directly from an interactive session, expose the
-`src/` directory first. In PowerShell:
+The rebuild validates the saved results and regenerates tables and figures without running a new search. Run `full_multiseed_sensitivity_ablation_frvcp.ipynb` from the repository root for a new campaign. New runs are saved under `runs/` and support checkpoint/resume.
 
-```powershell
-$env:PYTHONPATH = "src"
-```
+## Results
 
-## Quick Verification
+- Baseline: 60 instances, compared only with Montoya et al. (2017).
+- Placement: 900 records, three coverage levels and five placement seeds.
+- Intensity: 720 records, three coverages and four intensity levels.
+- Ablation: gamma = 0.1, omega = 0.9 only; Full, no shaking, no extended operators, and no candidate filtering (c40 only).
 
-From the repository root, run:
+The 200 ablation records reuse 60 Full sensitivity records: 1,880 reporting records represent 1,820 distinct executions. Each solve returns the minimum travel-plus-charging cost over five starts; vehicle count is a separate output. Five starts are not five solver-base-seed replications.
 
-```bash
-python scripts/verify_key_results.py
-```
+Raw results and traces are in `results_current/`. Source, input, protocol and start-seed checks accompany independent replay of all 1,820 returned plans for SOC, charging time, route duration and objective agreement. Replay validates feasible incumbents, not global optimality. Original campaign IDs are preserved.
 
-The script recomputes:
+The two negative reductions (-0.66% placement and -1.12% intensity) and nonmonotonic outcomes are retained. Confidence intervals average repeated observations within each benchmark instance before treating instances as statistical units. Figures retain the original plotting style.
 
-- five-seed DWC placement replication statistics at `omega = 0.9`
-- wireless-intensity sensitivity statistics for `omega in {0.3, 0.5, 0.7, 0.9}`
-- ablation summary values
-- consistency between reported `selected_arcs`/`applied_arcs` and the explicit wireless placement files
+Montoya reference costs are transcribed from the column labeled Montoya et al. (2017), BKS, in Tables 1-3 of [the supplied comparison paper](https://arxiv.org/abs/2108.01273). Later algorithms' costs are not used as baseline comparators. The original Montoya paper is identified by DOI [10.1016/j.trb.2017.02.004](https://doi.org/10.1016/j.trb.2017.02.004).
 
-## Regenerating Tables and Figures
-
-To regenerate CSV versions of the manuscript tables:
-
-```bash
-python scripts/make_tables.py
-```
-
-This script writes the following table files to `tables/`:
-
-- `table_validation.csv`
-- `table_multiseed_coverage.csv`
-- `table_multiseed_by_size_coverage.csv`
-- `table_omega_sensitivity.csv`
-- `table_ablation_summary.csv`
-
-To regenerate the figures computed directly from the multi-seed and omega-sensitivity CSV files:
-
-```bash
-python scripts/make_figures.py
-```
-
-This script writes the following figures to `figures/`:
-
-- `fig1_replication_distribution.png`
-- `fig2_omega_sensitivity_trend.png`
-- `fig3_vehicle_reduction_coverage.png`
-- `fig4_heatmap_cost.png`
-
-Figures 1 and 2 use the multi-seed replication and omega-sensitivity outputs. Figures 3 and 4 are single-placement diagnostics generated from `omega_sensitivity_all.csv` by selecting `omega = 0.9` and `placement_seed = 20240528`, then comparing against `no_wireless_all.csv`.
-
-## Source Code Layout
-
-- `src/evrp_dwc/instance_io.py` parses benchmark XML files and exposes node, distance, and energy helpers.
-- `src/evrp_dwc/wireless_generation.py` contains the deterministic wireless-placement and energy-overlay generation logic.
-- `src/evrp_dwc/paths.py` centralizes package paths used by source modules.
-- `src/evrp_dwc/csv_io.py` contains shared CSV writing utilities.
-- `src/evrp_dwc/tabu_search.py` contains the tabu-search implementation.
-- `src/generate_wireless_instances.py` is the command-line entry point for regenerating wireless placement files.
-
-## Data and Results
-
-- `data/benchmark_xml/` contains the EVRP-NL benchmark XML instances used in the study.
-- `data/wireless_instances/` contains explicit DWC placement and wireless-energy overlay files for all reported placement seeds and coverage levels.
-- `results_raw/` contains the raw CSV outputs needed for manuscript verification:
-  - `no_wireless_baseline/`
-  - `multiseed_replication/`
-  - `omega_sensitivity/`
-  - `ablation_frvcp/`
-
-The raw outputs included here are sufficient to reproduce the manuscript tables. Rerunning `experiments/full_multiseed_sensitivity_ablation_frvcp.ipynb` may create additional intermediate CSV files.
-
-## Re-running Wireless Placement Generation
-
-The wireless placement files can be regenerated with:
-
-```bash
-python src/generate_wireless_instances.py
-```
-
-The script shuffles customer-to-customer undirected pairs and selects `floor(coverage * number_of_pairs)` pairs, represented symmetrically as directed arcs.
+The recorded campaign used Python 3.11.1 and frvcpy 0.1.1. The latest local verification used Python 3.13. Charging and search source hashes are retained in the campaign manifest. Runtime measurements are descriptive observations from the recorded execution batches.

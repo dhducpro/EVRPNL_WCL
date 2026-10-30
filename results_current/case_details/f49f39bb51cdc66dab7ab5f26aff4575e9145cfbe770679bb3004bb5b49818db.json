@@ -1,0 +1,6216 @@
+{
+  "case_id": "f49f39bb51cdc66dab7ab5f26aff4575e9145cfbe770679bb3004bb5b49818db",
+  "campaign_id": "dfd263b6ec84471997e9ab17169caca2",
+  "instance": "tc1c10s2ct2.xml",
+  "equipped_arcs": [
+    [
+      1,
+      10
+    ],
+    [
+      10,
+      1
+    ],
+    [
+      7,
+      10
+    ],
+    [
+      10,
+      7
+    ],
+    [
+      3,
+      9
+    ],
+    [
+      9,
+      3
+    ],
+    [
+      2,
+      7
+    ],
+    [
+      7,
+      2
+    ]
+  ],
+  "protocol": {
+    "solver_kwargs": {
+      "base_tabu_tenure": 5,
+      "max_iter": 100,
+      "shake_tenure": 20,
+      "shake_iter": 20,
+      "opt_iter": 0,
+      "phi": 0.9,
+      "rng_seed": 20240528,
+      "use_candidate_lists": false,
+      "use_extended_operators": true,
+      "shake_steps": 1,
+      "max_shake_trials": 10,
+      "shake_inter_route_only": true,
+      "candidate_list_size": null
+    },
+    "use_multi_start": true,
+    "num_runs": 5,
+    "neighbor_list_size": 20,
+    "max_moves_per_iteration": 1200,
+    "initial_soc_fraction": 1.0,
+    "multi_insert_allowed": true,
+    "depot_charging_allowed": true,
+    "search_version": "multistart-interroute-reset-shaking-20261026",
+    "evaluator_version": "dwc-bounds-v1",
+    "energy_model_version": "linear-dwc-v2",
+    "search_sha256": "503c695edc152f017aeef1b18f4334339c9113fcfd27b64a175110fe2b4e4054",
+    "charging_sha256": "c5cfcead0c790bdcd77622c04b212cabc85de990ababe38a820896741f8b24d4"
+  },
+  "starts": [
+    {
+      "start_index": 0,
+      "best_cost": 10.725923870860731,
+      "vehicles": 3,
+      "routes": [
+        [
+          6,
+          8
+        ],
+        [
+          7,
+          9,
+          3,
+          5,
+          1,
+          2,
+          4
+        ],
+        [
+          10
+        ]
+      ],
+      "stats": {
+        "moves_generated": 25992,
+        "moves_evaluated": 16875,
+        "moves_skipped_validity": 9117,
+        "moves_skipped_tabu": 5464,
+        "moves_before_deduplication": 40684,
+        "moves_before_sampling": 25992,
+        "moves_duplicates_removed": 14692,
+        "shakes": 4,
+        "shakes_successful": 4,
+        "shake_steps_accepted": 4,
+        "shake_candidates_evaluated": 4,
+        "shake_candidates_skipped_validity": 10,
+        "frvcp_construction_calls": 139,
+        "frvcp_construction_time_sec": 0.032575285295024514,
+        "frvcp_search_calls": 2158,
+        "frvcp_search_time_sec": 0.5980969390366226,
+        "frvcp_calls": 2297,
+        "frvcp_total_time_sec": 0.6306722243316472,
+        "iterations_total": 100,
+        "starts_completed": 1,
+        "best_start_iterations": 100,
+        "accepted_iterations": 100
+      },
+      "history": [
+        {
+          "iter": 0,
+          "current_cost": 10.84627753292746,
+          "best_cost": 10.84627753292746,
+          "move": "cross suffix at 1 (route 0) with suffix at 1 (route 1)",
+          "tabu_size": 2,
+          "tabu_tenure": 5,
+          "non_imp": 0,
+          "shake_counter": null
+        },
+        {
+          "iter": 1,
+          "current_cost": 10.750148763444894,
+          "best_cost": 10.750148763444894,
+          "move": "relocate customer 10 from route 0 to route 2",
+          "tabu_size": 3,
+          "tabu_tenure": 5,
+          "non_imp": 0,
+          "shake_counter": null
+        },
+        {
+          "iter": 2,
+          "current_cost": 10.750148763444894,
+          "best_cost": 10.750148763444894,
+          "move": "or-opt move [8] from route 0 to route 0 at pos 2",
+          "tabu_size": 6,
+          "tabu_tenure": 5,
+          "non_imp": 1,
+          "shake_counter": null
+        },
+        {
+          "iter": 3,
+          "current_cost": 10.750148763444894,
+          "best_cost": 10.750148763444894,
+          "move": "2-opt reverse segment [2:7] in route 1",
+          "tabu_size": 12,
+          "tabu_tenure": 5,
+          "non_imp": 2,
+          "shake_counter": null
+        },
+        {
+          "iter": 4,
+          "current_cost": 10.76203700446814,
+          "best_cost": 10.750148763444894,
+          "move": "or-opt move [9] from route 1 to route 1 at pos 2",
+          "tabu_size": 15,
+          "tabu_tenure": 5,
+          "non_imp": 3,
+          "shake_counter": null
+        },
+        {
+          "iter": 5,
+          "current_cost": 10.725923870860731,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [4] from route 1 to route 1 at pos 7",
+          "tabu_size": 16,
+          "tabu_tenure": 5,
+          "non_imp": 0,
+          "shake_counter": null
+        },
+        {
+          "iter": 6,
+          "current_cost": 10.790104365904009,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [7, 9] from route 1 to route 1 at pos 7",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 1,
+          "shake_counter": null
+        },
+        {
+          "iter": 7,
+          "current_cost": 10.790104365904009,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [6] from route 0 to route 0 at pos 2",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 2,
+          "shake_counter": null
+        },
+        {
+          "iter": 8,
+          "current_cost": 10.764514781484044,
+          "best_cost": 10.725923870860731,
+          "move": "2-opt reverse segment [0:4] in route 1",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 3,
+          "shake_counter": null
+        },
+        {
+          "iter": 9,
+          "current_cost": 10.77785472190617,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [7] from route 1 to route 1 at pos 7",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 4,
+          "shake_counter": null
+        },
+        {
+          "iter": 10,
+          "current_cost": 10.80431309173803,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [4] from route 1 to route 1 at pos 0",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 5,
+          "shake_counter": null
+        },
+        {
+          "iter": 11,
+          "current_cost": 10.779062503526857,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [9, 7] from route 1 to route 1 at pos 0",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 6,
+          "shake_counter": null
+        },
+        {
+          "iter": 12,
+          "current_cost": 10.779062503526857,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [8] from route 0 to route 0 at pos 2",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 7,
+          "shake_counter": null
+        },
+        {
+          "iter": 13,
+          "current_cost": 10.750148763444894,
+          "best_cost": 10.725923870860731,
+          "move": "2-opt reverse segment [3:7] in route 1",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 8,
+          "shake_counter": null
+        },
+        {
+          "iter": 14,
+          "current_cost": 10.76203700446814,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [9] from route 1 to route 1 at pos 2",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 9,
+          "shake_counter": null
+        },
+        {
+          "iter": 15,
+          "current_cost": 10.725923870860731,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [4] from route 1 to route 1 at pos 7",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 10,
+          "shake_counter": null
+        },
+        {
+          "iter": 16,
+          "current_cost": 10.790104365904009,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [7, 9] from route 1 to route 1 at pos 7",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 11,
+          "shake_counter": null
+        },
+        {
+          "iter": 17,
+          "current_cost": 10.790104365904009,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [6] from route 0 to route 0 at pos 2",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 12,
+          "shake_counter": null
+        },
+        {
+          "iter": 18,
+          "current_cost": 10.764514781484044,
+          "best_cost": 10.725923870860731,
+          "move": "2-opt reverse segment [0:4] in route 1",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 13,
+          "shake_counter": null
+        },
+        {
+          "iter": 19,
+          "current_cost": 10.77785472190617,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [7] from route 1 to route 1 at pos 7",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 14,
+          "shake_counter": null
+        },
+        {
+          "iter": 20,
+          "current_cost": 10.80431309173803,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [4] from route 1 to route 1 at pos 0",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 15,
+          "shake_counter": null
+        },
+        {
+          "iter": 21,
+          "current_cost": 10.779062503526857,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [9, 7] from route 1 to route 1 at pos 0",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 16,
+          "shake_counter": null
+        },
+        {
+          "iter": 22,
+          "current_cost": 10.779062503526857,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [8] from route 0 to route 0 at pos 2",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 17,
+          "shake_counter": null
+        },
+        {
+          "iter": 23,
+          "current_cost": 10.750148763444894,
+          "best_cost": 10.725923870860731,
+          "move": "2-opt reverse segment [3:7] in route 1",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 18,
+          "shake_counter": null
+        },
+        {
+          "iter": 24,
+          "current_cost": 10.76203700446814,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [9] from route 1 to route 1 at pos 2",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 19,
+          "shake_counter": null
+        },
+        {
+          "iter": 25,
+          "current_cost": 15.40011630208984,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [4] from route 1 to route 1 at pos 7",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 0,
+          "shake_counter": null
+        },
+        {
+          "iter": 26,
+          "current_cost": 10.725923870860731,
+          "best_cost": 10.725923870860731,
+          "move": "relocate customer 5 from route 2 to route 1",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 1,
+          "shake_counter": null
+        },
+        {
+          "iter": 27,
+          "current_cost": 10.725923870860731,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [6] from route 0 to route 0 at pos 2",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 2,
+          "shake_counter": null
+        },
+        {
+          "iter": 28,
+          "current_cost": 10.76203700446814,
+          "best_cost": 10.725923870860731,
+          "move": "2-opt reverse segment [2:6] in route 1",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 3,
+          "shake_counter": null
+        },
+        {
+          "iter": 29,
+          "current_cost": 10.750148763444894,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [7] from route 1 to route 1 at pos 2",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 4,
+          "shake_counter": null
+        },
+        {
+          "iter": 30,
+          "current_cost": 10.77785472190617,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [9, 7] from route 1 to route 1 at pos 7",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 5,
+          "shake_counter": null
+        },
+        {
+          "iter": 31,
+          "current_cost": 10.80431309173803,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [4] from route 1 to route 1 at pos 0",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 6,
+          "shake_counter": null
+        },
+        {
+          "iter": 32,
+          "current_cost": 10.80431309173803,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [8] from route 0 to route 0 at pos 2",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 7,
+          "shake_counter": null
+        },
+        {
+          "iter": 33,
+          "current_cost": 10.775399351656066,
+          "best_cost": 10.725923870860731,
+          "move": "2-opt reverse segment [1:5] in route 1",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 8,
+          "shake_counter": null
+        },
+        {
+          "iter": 34,
+          "current_cost": 10.762059411233944,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [9] from route 1 to route 1 at pos 7",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 9,
+          "shake_counter": null
+        },
+        {
+          "iter": 35,
+          "current_cost": 10.76203700446814,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [7, 9] from route 1 to route 1 at pos 0",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 10,
+          "shake_counter": null
+        },
+        {
+          "iter": 36,
+          "current_cost": 10.725923870860731,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [4] from route 1 to route 1 at pos 7",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 11,
+          "shake_counter": null
+        },
+        {
+          "iter": 37,
+          "current_cost": 10.725923870860731,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [6] from route 0 to route 0 at pos 2",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 12,
+          "shake_counter": null
+        },
+        {
+          "iter": 38,
+          "current_cost": 10.76203700446814,
+          "best_cost": 10.725923870860731,
+          "move": "2-opt reverse segment [2:6] in route 1",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 13,
+          "shake_counter": null
+        },
+        {
+          "iter": 39,
+          "current_cost": 10.750148763444894,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [7] from route 1 to route 1 at pos 2",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 14,
+          "shake_counter": null
+        },
+        {
+          "iter": 40,
+          "current_cost": 10.77785472190617,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [9, 7] from route 1 to route 1 at pos 7",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 15,
+          "shake_counter": null
+        },
+        {
+          "iter": 41,
+          "current_cost": 10.80431309173803,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [4] from route 1 to route 1 at pos 0",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 16,
+          "shake_counter": null
+        },
+        {
+          "iter": 42,
+          "current_cost": 10.80431309173803,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [8] from route 0 to route 0 at pos 2",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 17,
+          "shake_counter": null
+        },
+        {
+          "iter": 43,
+          "current_cost": 10.775399351656066,
+          "best_cost": 10.725923870860731,
+          "move": "2-opt reverse segment [1:5] in route 1",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 18,
+          "shake_counter": null
+        },
+        {
+          "iter": 44,
+          "current_cost": 10.762059411233944,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [9] from route 1 to route 1 at pos 7",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 19,
+          "shake_counter": null
+        },
+        {
+          "iter": 45,
+          "current_cost": 10.979433705624684,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [7, 9] from route 1 to route 1 at pos 0",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 0,
+          "shake_counter": null
+        },
+        {
+          "iter": 46,
+          "current_cost": 10.76203700446814,
+          "best_cost": 10.725923870860731,
+          "move": "relocate customer 6 from route 2 to route 0",
+          "tabu_size": 15,
+          "tabu_tenure": 5,
+          "non_imp": 1,
+          "shake_counter": null
+        },
+        {
+          "iter": 47,
+          "current_cost": 10.725923870860731,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [4] from route 1 to route 1 at pos 7",
+          "tabu_size": 16,
+          "tabu_tenure": 5,
+          "non_imp": 2,
+          "shake_counter": null
+        },
+        {
+          "iter": 48,
+          "current_cost": 10.76203700446814,
+          "best_cost": 10.725923870860731,
+          "move": "2-opt reverse segment [2:6] in route 1",
+          "tabu_size": 16,
+          "tabu_tenure": 5,
+          "non_imp": 3,
+          "shake_counter": null
+        },
+        {
+          "iter": 49,
+          "current_cost": 10.750148763444894,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [7] from route 1 to route 1 at pos 2",
+          "tabu_size": 16,
+          "tabu_tenure": 5,
+          "non_imp": 4,
+          "shake_counter": null
+        },
+        {
+          "iter": 50,
+          "current_cost": 10.77785472190617,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [9, 7] from route 1 to route 1 at pos 7",
+          "tabu_size": 16,
+          "tabu_tenure": 5,
+          "non_imp": 5,
+          "shake_counter": null
+        },
+        {
+          "iter": 51,
+          "current_cost": 10.77785472190617,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [6] from route 0 to route 0 at pos 2",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 6,
+          "shake_counter": null
+        },
+        {
+          "iter": 52,
+          "current_cost": 10.80431309173803,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [4] from route 1 to route 1 at pos 0",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 7,
+          "shake_counter": null
+        },
+        {
+          "iter": 53,
+          "current_cost": 10.775399351656066,
+          "best_cost": 10.725923870860731,
+          "move": "2-opt reverse segment [1:5] in route 1",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 8,
+          "shake_counter": null
+        },
+        {
+          "iter": 54,
+          "current_cost": 10.762059411233944,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [9] from route 1 to route 1 at pos 7",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 9,
+          "shake_counter": null
+        },
+        {
+          "iter": 55,
+          "current_cost": 10.76203700446814,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [7, 9] from route 1 to route 1 at pos 0",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 10,
+          "shake_counter": null
+        },
+        {
+          "iter": 56,
+          "current_cost": 10.725923870860731,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [4] from route 1 to route 1 at pos 7",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 11,
+          "shake_counter": null
+        },
+        {
+          "iter": 57,
+          "current_cost": 10.725923870860731,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [8] from route 0 to route 0 at pos 2",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 12,
+          "shake_counter": null
+        },
+        {
+          "iter": 58,
+          "current_cost": 10.76203700446814,
+          "best_cost": 10.725923870860731,
+          "move": "2-opt reverse segment [2:6] in route 1",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 13,
+          "shake_counter": null
+        },
+        {
+          "iter": 59,
+          "current_cost": 10.750148763444894,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [7] from route 1 to route 1 at pos 2",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 14,
+          "shake_counter": null
+        },
+        {
+          "iter": 60,
+          "current_cost": 10.77785472190617,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [9, 7] from route 1 to route 1 at pos 7",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 15,
+          "shake_counter": null
+        },
+        {
+          "iter": 61,
+          "current_cost": 10.80431309173803,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [4] from route 1 to route 1 at pos 0",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 16,
+          "shake_counter": null
+        },
+        {
+          "iter": 62,
+          "current_cost": 10.80431309173803,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [6] from route 0 to route 0 at pos 2",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 17,
+          "shake_counter": null
+        },
+        {
+          "iter": 63,
+          "current_cost": 10.775399351656066,
+          "best_cost": 10.725923870860731,
+          "move": "2-opt reverse segment [1:5] in route 1",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 18,
+          "shake_counter": null
+        },
+        {
+          "iter": 64,
+          "current_cost": 10.762059411233944,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [9] from route 1 to route 1 at pos 7",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 19,
+          "shake_counter": null
+        },
+        {
+          "iter": 65,
+          "current_cost": 15.442146232694498,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [7, 9] from route 1 to route 1 at pos 0",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 0,
+          "shake_counter": null
+        },
+        {
+          "iter": 66,
+          "current_cost": 10.76203700446814,
+          "best_cost": 10.725923870860731,
+          "move": "relocate customer 2 from route 2 to route 1",
+          "tabu_size": 16,
+          "tabu_tenure": 5,
+          "non_imp": 1,
+          "shake_counter": null
+        },
+        {
+          "iter": 67,
+          "current_cost": 10.725923870860731,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [4] from route 1 to route 1 at pos 7",
+          "tabu_size": 16,
+          "tabu_tenure": 5,
+          "non_imp": 2,
+          "shake_counter": null
+        },
+        {
+          "iter": 68,
+          "current_cost": 10.725923870860731,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [8] from route 0 to route 0 at pos 2",
+          "tabu_size": 14,
+          "tabu_tenure": 5,
+          "non_imp": 3,
+          "shake_counter": null
+        },
+        {
+          "iter": 69,
+          "current_cost": 10.76203700446814,
+          "best_cost": 10.725923870860731,
+          "move": "2-opt reverse segment [2:6] in route 1",
+          "tabu_size": 16,
+          "tabu_tenure": 5,
+          "non_imp": 4,
+          "shake_counter": null
+        },
+        {
+          "iter": 70,
+          "current_cost": 10.750148763444894,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [7] from route 1 to route 1 at pos 2",
+          "tabu_size": 16,
+          "tabu_tenure": 5,
+          "non_imp": 5,
+          "shake_counter": null
+        },
+        {
+          "iter": 71,
+          "current_cost": 10.77785472190617,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [9, 7] from route 1 to route 1 at pos 7",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 6,
+          "shake_counter": null
+        },
+        {
+          "iter": 72,
+          "current_cost": 10.80431309173803,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [4] from route 1 to route 1 at pos 0",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 7,
+          "shake_counter": null
+        },
+        {
+          "iter": 73,
+          "current_cost": 10.80431309173803,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [6] from route 0 to route 0 at pos 2",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 8,
+          "shake_counter": null
+        },
+        {
+          "iter": 74,
+          "current_cost": 10.775399351656066,
+          "best_cost": 10.725923870860731,
+          "move": "2-opt reverse segment [1:5] in route 1",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 9,
+          "shake_counter": null
+        },
+        {
+          "iter": 75,
+          "current_cost": 10.762059411233944,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [9] from route 1 to route 1 at pos 7",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 10,
+          "shake_counter": null
+        },
+        {
+          "iter": 76,
+          "current_cost": 10.76203700446814,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [7, 9] from route 1 to route 1 at pos 0",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 11,
+          "shake_counter": null
+        },
+        {
+          "iter": 77,
+          "current_cost": 10.725923870860731,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [4] from route 1 to route 1 at pos 7",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 12,
+          "shake_counter": null
+        },
+        {
+          "iter": 78,
+          "current_cost": 10.725923870860731,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [8] from route 0 to route 0 at pos 2",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 13,
+          "shake_counter": null
+        },
+        {
+          "iter": 79,
+          "current_cost": 10.76203700446814,
+          "best_cost": 10.725923870860731,
+          "move": "2-opt reverse segment [2:6] in route 1",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 14,
+          "shake_counter": null
+        },
+        {
+          "iter": 80,
+          "current_cost": 10.750148763444894,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [7] from route 1 to route 1 at pos 2",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 15,
+          "shake_counter": null
+        },
+        {
+          "iter": 81,
+          "current_cost": 10.77785472190617,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [9, 7] from route 1 to route 1 at pos 7",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 16,
+          "shake_counter": null
+        },
+        {
+          "iter": 82,
+          "current_cost": 10.80431309173803,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [4] from route 1 to route 1 at pos 0",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 17,
+          "shake_counter": null
+        },
+        {
+          "iter": 83,
+          "current_cost": 10.80431309173803,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [6] from route 0 to route 0 at pos 2",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 18,
+          "shake_counter": null
+        },
+        {
+          "iter": 84,
+          "current_cost": 10.775399351656066,
+          "best_cost": 10.725923870860731,
+          "move": "2-opt reverse segment [1:5] in route 1",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 19,
+          "shake_counter": null
+        },
+        {
+          "iter": 85,
+          "current_cost": 13.636375411023577,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [9] from route 1 to route 1 at pos 7",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 0,
+          "shake_counter": null
+        },
+        {
+          "iter": 86,
+          "current_cost": 10.762059411233944,
+          "best_cost": 10.725923870860731,
+          "move": "relocate customer 4 from route 0 to route 1",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 1,
+          "shake_counter": null
+        },
+        {
+          "iter": 87,
+          "current_cost": 10.76203700446814,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [7, 9] from route 1 to route 1 at pos 0",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 2,
+          "shake_counter": null
+        },
+        {
+          "iter": 88,
+          "current_cost": 10.76203700446814,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [8] from route 0 to route 0 at pos 2",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 3,
+          "shake_counter": null
+        },
+        {
+          "iter": 89,
+          "current_cost": 10.767055429158523,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [3] from route 1 to route 1 at pos 5",
+          "tabu_size": 15,
+          "tabu_tenure": 5,
+          "non_imp": 4,
+          "shake_counter": null
+        },
+        {
+          "iter": 90,
+          "current_cost": 10.755167188135276,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [7] from route 1 to route 1 at pos 2",
+          "tabu_size": 15,
+          "tabu_tenure": 5,
+          "non_imp": 5,
+          "shake_counter": null
+        },
+        {
+          "iter": 91,
+          "current_cost": 10.776778562432355,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [4] from route 1 to route 1 at pos 7",
+          "tabu_size": 15,
+          "tabu_tenure": 5,
+          "non_imp": 6,
+          "shake_counter": null
+        },
+        {
+          "iter": 92,
+          "current_cost": 10.786037710137183,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [2] from route 1 to route 1 at pos 2",
+          "tabu_size": 15,
+          "tabu_tenure": 5,
+          "non_imp": 7,
+          "shake_counter": null
+        },
+        {
+          "iter": 93,
+          "current_cost": 10.750148763444894,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [1] from route 1 to route 1 at pos 3",
+          "tabu_size": 15,
+          "tabu_tenure": 5,
+          "non_imp": 8,
+          "shake_counter": null
+        },
+        {
+          "iter": 94,
+          "current_cost": 10.750148763444894,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [6] from route 0 to route 0 at pos 2",
+          "tabu_size": 15,
+          "tabu_tenure": 5,
+          "non_imp": 9,
+          "shake_counter": null
+        },
+        {
+          "iter": 95,
+          "current_cost": 10.755167188135276,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [5] from route 1 to route 1 at pos 6",
+          "tabu_size": 15,
+          "tabu_tenure": 5,
+          "non_imp": 10,
+          "shake_counter": null
+        },
+        {
+          "iter": 96,
+          "current_cost": 10.767055429158523,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [9] from route 1 to route 1 at pos 2",
+          "tabu_size": 15,
+          "tabu_tenure": 5,
+          "non_imp": 11,
+          "shake_counter": null
+        },
+        {
+          "iter": 97,
+          "current_cost": 10.769533206174426,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [7, 9] from route 1 to route 1 at pos 7",
+          "tabu_size": 15,
+          "tabu_tenure": 5,
+          "non_imp": 12,
+          "shake_counter": null
+        },
+        {
+          "iter": 98,
+          "current_cost": 10.788689210221406,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [4] from route 1 to route 1 at pos 0",
+          "tabu_size": 15,
+          "tabu_tenure": 5,
+          "non_imp": 13,
+          "shake_counter": null
+        },
+        {
+          "iter": 99,
+          "current_cost": 10.788689210221406,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [8] from route 0 to route 0 at pos 2",
+          "tabu_size": 15,
+          "tabu_tenure": 5,
+          "non_imp": 14,
+          "shake_counter": null
+        }
+      ],
+      "shake_events": [
+        {
+          "iteration": 25,
+          "before_routes": [
+            [
+              6,
+              8
+            ],
+            [
+              7,
+              9,
+              3,
+              5,
+              1,
+              2,
+              4
+            ],
+            [
+              10
+            ],
+            []
+          ],
+          "after_routes": [
+            [
+              6,
+              8
+            ],
+            [
+              7,
+              9,
+              3,
+              1,
+              2,
+              4
+            ],
+            [
+              5,
+              10
+            ],
+            []
+          ],
+          "shaken_cost": 15.40011630208984,
+          "feasible": true,
+          "changed": true
+        },
+        {
+          "iteration": 45,
+          "before_routes": [
+            [
+              6,
+              8
+            ],
+            [
+              7,
+              9,
+              4,
+              3,
+              5,
+              1,
+              2
+            ],
+            [
+              10
+            ],
+            []
+          ],
+          "after_routes": [
+            [
+              8
+            ],
+            [
+              7,
+              9,
+              4,
+              3,
+              5,
+              1,
+              2
+            ],
+            [
+              6,
+              10
+            ],
+            []
+          ],
+          "shaken_cost": 10.979433705624684,
+          "feasible": true,
+          "changed": true
+        },
+        {
+          "iteration": 65,
+          "before_routes": [
+            [
+              8,
+              6
+            ],
+            [
+              7,
+              9,
+              4,
+              3,
+              5,
+              1,
+              2
+            ],
+            [
+              10
+            ],
+            []
+          ],
+          "after_routes": [
+            [
+              8,
+              6
+            ],
+            [
+              7,
+              9,
+              4,
+              3,
+              5,
+              1
+            ],
+            [
+              10,
+              2
+            ],
+            []
+          ],
+          "shaken_cost": 15.442146232694498,
+          "feasible": true,
+          "changed": true
+        },
+        {
+          "iteration": 85,
+          "before_routes": [
+            [
+              8,
+              6
+            ],
+            [
+              4,
+              3,
+              5,
+              1,
+              2,
+              7,
+              9
+            ],
+            [
+              10
+            ],
+            []
+          ],
+          "after_routes": [
+            [
+              8,
+              6,
+              4
+            ],
+            [
+              3,
+              5,
+              1,
+              2,
+              7,
+              9
+            ],
+            [
+              10
+            ],
+            []
+          ],
+          "shaken_cost": 13.636375411023577,
+          "feasible": true,
+          "changed": true
+        }
+      ],
+      "start_seed": 2795083108
+    },
+    {
+      "start_index": 1,
+      "best_cost": 10.725923870860731,
+      "vehicles": 3,
+      "routes": [
+        [
+          7,
+          9,
+          3,
+          5,
+          1,
+          2,
+          4
+        ],
+        [
+          6,
+          8
+        ],
+        [
+          10
+        ]
+      ],
+      "stats": {
+        "moves_generated": 26013,
+        "moves_evaluated": 16868,
+        "moves_skipped_validity": 9145,
+        "moves_skipped_tabu": 5132,
+        "moves_before_deduplication": 40693,
+        "moves_before_sampling": 26013,
+        "moves_duplicates_removed": 14680,
+        "shakes": 4,
+        "shakes_successful": 4,
+        "shake_steps_accepted": 4,
+        "shake_candidates_evaluated": 5,
+        "shake_candidates_skipped_validity": 0,
+        "frvcp_construction_calls": 266,
+        "frvcp_construction_time_sec": 0.06380719738081098,
+        "frvcp_search_calls": 5438,
+        "frvcp_search_time_sec": 1.4685227249283344,
+        "frvcp_calls": 5704,
+        "frvcp_total_time_sec": 1.5323299223091453,
+        "iterations_total": 100,
+        "starts_completed": 1,
+        "best_start_iterations": 100,
+        "accepted_iterations": 100
+      },
+      "history": [
+        {
+          "iter": 0,
+          "current_cost": 11.92519301621582,
+          "best_cost": 11.92519301621582,
+          "move": "cross suffix at 3 (route 0) with suffix at 1 (route 1)",
+          "tabu_size": 2,
+          "tabu_tenure": 5,
+          "non_imp": 0,
+          "shake_counter": null
+        },
+        {
+          "iter": 1,
+          "current_cost": 11.859787913872797,
+          "best_cost": 11.859787913872797,
+          "move": "2-opt reverse segment [2:5] in route 0",
+          "tabu_size": 6,
+          "tabu_tenure": 5,
+          "non_imp": 0,
+          "shake_counter": null
+        },
+        {
+          "iter": 2,
+          "current_cost": 11.802212959893904,
+          "best_cost": 11.802212959893904,
+          "move": "relocate customer 8 from route 1 to route 0",
+          "tabu_size": 9,
+          "tabu_tenure": 5,
+          "non_imp": 0,
+          "shake_counter": null
+        },
+        {
+          "iter": 3,
+          "current_cost": 11.70608419041134,
+          "best_cost": 11.70608419041134,
+          "move": "relocate customer 10 from route 1 to route 2",
+          "tabu_size": 10,
+          "tabu_tenure": 5,
+          "non_imp": 0,
+          "shake_counter": null
+        },
+        {
+          "iter": 4,
+          "current_cost": 11.704677159022035,
+          "best_cost": 11.704677159022035,
+          "move": "or-opt move [4] from route 0 to route 0 at pos 1",
+          "tabu_size": 13,
+          "tabu_tenure": 5,
+          "non_imp": 0,
+          "shake_counter": null
+        },
+        {
+          "iter": 5,
+          "current_cost": 11.699658734331654,
+          "best_cost": 11.699658734331654,
+          "move": "or-opt move [5] from route 0 to route 0 at pos 4",
+          "tabu_size": 14,
+          "tabu_tenure": 5,
+          "non_imp": 0,
+          "shake_counter": null
+        },
+        {
+          "iter": 6,
+          "current_cost": 11.735547681023943,
+          "best_cost": 11.699658734331654,
+          "move": "or-opt move [1] from route 0 to route 0 at pos 2",
+          "tabu_size": 13,
+          "tabu_tenure": 5,
+          "non_imp": 1,
+          "shake_counter": null
+        },
+        {
+          "iter": 7,
+          "current_cost": 11.726288533319115,
+          "best_cost": 11.699658734331654,
+          "move": "or-opt move [2] from route 0 to route 0 at pos 2",
+          "tabu_size": 13,
+          "tabu_tenure": 5,
+          "non_imp": 2,
+          "shake_counter": null
+        },
+        {
+          "iter": 8,
+          "current_cost": 11.731527296536916,
+          "best_cost": 11.699658734331654,
+          "move": "swap customers 6 and 8 in route 0",
+          "tabu_size": 16,
+          "tabu_tenure": 5,
+          "non_imp": 3,
+          "shake_counter": null
+        },
+        {
+          "iter": 9,
+          "current_cost": 11.71195313855842,
+          "best_cost": 11.699658734331654,
+          "move": "or-opt move [4] from route 0 to route 0 at pos 6",
+          "tabu_size": 16,
+          "tabu_tenure": 5,
+          "non_imp": 4,
+          "shake_counter": null
+        },
+        {
+          "iter": 10,
+          "current_cost": 11.706934713868035,
+          "best_cost": 11.699658734331654,
+          "move": "or-opt move [3] from route 0 to route 0 at pos 5",
+          "tabu_size": 16,
+          "tabu_tenure": 5,
+          "non_imp": 5,
+          "shake_counter": null
+        },
+        {
+          "iter": 11,
+          "current_cost": 11.742823660560324,
+          "best_cost": 11.699658734331654,
+          "move": "or-opt move [1] from route 0 to route 0 at pos 5",
+          "tabu_size": 16,
+          "tabu_tenure": 5,
+          "non_imp": 6,
+          "shake_counter": null
+        },
+        {
+          "iter": 12,
+          "current_cost": 11.733564512855496,
+          "best_cost": 11.699658734331654,
+          "move": "or-opt move [2] from route 0 to route 0 at pos 5",
+          "tabu_size": 16,
+          "tabu_tenure": 5,
+          "non_imp": 7,
+          "shake_counter": null
+        },
+        {
+          "iter": 13,
+          "current_cost": 11.70608419041134,
+          "best_cost": 11.699658734331654,
+          "move": "swap customers 8 and 6 in route 0",
+          "tabu_size": 16,
+          "tabu_tenure": 5,
+          "non_imp": 8,
+          "shake_counter": null
+        },
+        {
+          "iter": 14,
+          "current_cost": 11.704677159022035,
+          "best_cost": 11.699658734331654,
+          "move": "or-opt move [4] from route 0 to route 0 at pos 1",
+          "tabu_size": 16,
+          "tabu_tenure": 5,
+          "non_imp": 9,
+          "shake_counter": null
+        },
+        {
+          "iter": 15,
+          "current_cost": 11.699658734331654,
+          "best_cost": 11.699658734331654,
+          "move": "or-opt move [5] from route 0 to route 0 at pos 4",
+          "tabu_size": 16,
+          "tabu_tenure": 5,
+          "non_imp": 10,
+          "shake_counter": null
+        },
+        {
+          "iter": 16,
+          "current_cost": 11.735547681023943,
+          "best_cost": 11.699658734331654,
+          "move": "or-opt move [1] from route 0 to route 0 at pos 2",
+          "tabu_size": 16,
+          "tabu_tenure": 5,
+          "non_imp": 11,
+          "shake_counter": null
+        },
+        {
+          "iter": 17,
+          "current_cost": 11.726288533319115,
+          "best_cost": 11.699658734331654,
+          "move": "or-opt move [2] from route 0 to route 0 at pos 2",
+          "tabu_size": 16,
+          "tabu_tenure": 5,
+          "non_imp": 12,
+          "shake_counter": null
+        },
+        {
+          "iter": 18,
+          "current_cost": 11.731527296536916,
+          "best_cost": 11.699658734331654,
+          "move": "swap customers 6 and 8 in route 0",
+          "tabu_size": 16,
+          "tabu_tenure": 5,
+          "non_imp": 13,
+          "shake_counter": null
+        },
+        {
+          "iter": 19,
+          "current_cost": 11.71195313855842,
+          "best_cost": 11.699658734331654,
+          "move": "or-opt move [4] from route 0 to route 0 at pos 6",
+          "tabu_size": 16,
+          "tabu_tenure": 5,
+          "non_imp": 14,
+          "shake_counter": null
+        },
+        {
+          "iter": 20,
+          "current_cost": 11.706934713868035,
+          "best_cost": 11.699658734331654,
+          "move": "or-opt move [3] from route 0 to route 0 at pos 5",
+          "tabu_size": 16,
+          "tabu_tenure": 5,
+          "non_imp": 15,
+          "shake_counter": null
+        },
+        {
+          "iter": 21,
+          "current_cost": 11.742823660560324,
+          "best_cost": 11.699658734331654,
+          "move": "or-opt move [1] from route 0 to route 0 at pos 5",
+          "tabu_size": 16,
+          "tabu_tenure": 5,
+          "non_imp": 16,
+          "shake_counter": null
+        },
+        {
+          "iter": 22,
+          "current_cost": 11.733564512855496,
+          "best_cost": 11.699658734331654,
+          "move": "or-opt move [2] from route 0 to route 0 at pos 5",
+          "tabu_size": 16,
+          "tabu_tenure": 5,
+          "non_imp": 17,
+          "shake_counter": null
+        },
+        {
+          "iter": 23,
+          "current_cost": 11.70608419041134,
+          "best_cost": 11.699658734331654,
+          "move": "swap customers 8 and 6 in route 0",
+          "tabu_size": 16,
+          "tabu_tenure": 5,
+          "non_imp": 18,
+          "shake_counter": null
+        },
+        {
+          "iter": 24,
+          "current_cost": 11.704677159022035,
+          "best_cost": 11.699658734331654,
+          "move": "or-opt move [4] from route 0 to route 0 at pos 1",
+          "tabu_size": 16,
+          "tabu_tenure": 5,
+          "non_imp": 19,
+          "shake_counter": null
+        },
+        {
+          "iter": 25,
+          "current_cost": 15.635724953587621,
+          "best_cost": 11.699658734331654,
+          "move": "or-opt move [5] from route 0 to route 0 at pos 4",
+          "tabu_size": 16,
+          "tabu_tenure": 5,
+          "non_imp": 0,
+          "shake_counter": null
+        },
+        {
+          "iter": 26,
+          "current_cost": 11.699658734331654,
+          "best_cost": 11.699658734331654,
+          "move": "relocate customer 7 from route 2 to route 1",
+          "tabu_size": 16,
+          "tabu_tenure": 5,
+          "non_imp": 1,
+          "shake_counter": null
+        },
+        {
+          "iter": 27,
+          "current_cost": 11.735547681023943,
+          "best_cost": 11.699658734331654,
+          "move": "or-opt move [1] from route 0 to route 0 at pos 2",
+          "tabu_size": 16,
+          "tabu_tenure": 5,
+          "non_imp": 2,
+          "shake_counter": null
+        },
+        {
+          "iter": 28,
+          "current_cost": 11.726288533319115,
+          "best_cost": 11.699658734331654,
+          "move": "or-opt move [2] from route 0 to route 0 at pos 2",
+          "tabu_size": 15,
+          "tabu_tenure": 5,
+          "non_imp": 3,
+          "shake_counter": null
+        },
+        {
+          "iter": 29,
+          "current_cost": 11.7156880365846,
+          "best_cost": 11.699658734331654,
+          "move": "or-opt move [4] from route 0 to route 0 at pos 6",
+          "tabu_size": 15,
+          "tabu_tenure": 5,
+          "non_imp": 4,
+          "shake_counter": null
+        },
+        {
+          "iter": 30,
+          "current_cost": 11.710669611894216,
+          "best_cost": 11.699658734331654,
+          "move": "or-opt move [3] from route 0 to route 0 at pos 5",
+          "tabu_size": 15,
+          "tabu_tenure": 5,
+          "non_imp": 5,
+          "shake_counter": null
+        },
+        {
+          "iter": 31,
+          "current_cost": 11.706934713868035,
+          "best_cost": 11.699658734331654,
+          "move": "swap customers 6 and 8 in route 0",
+          "tabu_size": 16,
+          "tabu_tenure": 5,
+          "non_imp": 6,
+          "shake_counter": null
+        },
+        {
+          "iter": 32,
+          "current_cost": 11.742823660560324,
+          "best_cost": 11.699658734331654,
+          "move": "or-opt move [1] from route 0 to route 0 at pos 5",
+          "tabu_size": 16,
+          "tabu_tenure": 5,
+          "non_imp": 7,
+          "shake_counter": null
+        },
+        {
+          "iter": 33,
+          "current_cost": 11.71195313855842,
+          "best_cost": 11.699658734331654,
+          "move": "swap customers 2 and 4 in route 0",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 8,
+          "shake_counter": null
+        },
+        {
+          "iter": 34,
+          "current_cost": 11.802184275575284,
+          "best_cost": 11.699658734331654,
+          "move": "or-opt move [3] from route 0 to route 0 at pos 6",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 9,
+          "shake_counter": null
+        },
+        {
+          "iter": 35,
+          "current_cost": 11.762009007391002,
+          "best_cost": 11.699658734331654,
+          "move": "or-opt move [5, 1] from route 0 to route 0 at pos 6",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 10,
+          "shake_counter": null
+        },
+        {
+          "iter": 36,
+          "current_cost": 11.754733027854622,
+          "best_cost": 11.699658734331654,
+          "move": "swap customers 8 and 6 in route 0",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 11,
+          "shake_counter": null
+        },
+        {
+          "iter": 37,
+          "current_cost": 11.726288533319115,
+          "best_cost": 11.699658734331654,
+          "move": "or-opt move [1] from route 0 to route 0 at pos 3",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 12,
+          "shake_counter": null
+        },
+        {
+          "iter": 38,
+          "current_cost": 11.7156880365846,
+          "best_cost": 11.699658734331654,
+          "move": "or-opt move [4] from route 0 to route 0 at pos 6",
+          "tabu_size": 16,
+          "tabu_tenure": 5,
+          "non_imp": 13,
+          "shake_counter": null
+        },
+        {
+          "iter": 39,
+          "current_cost": 11.710669611894216,
+          "best_cost": 11.699658734331654,
+          "move": "or-opt move [3] from route 0 to route 0 at pos 5",
+          "tabu_size": 16,
+          "tabu_tenure": 5,
+          "non_imp": 14,
+          "shake_counter": null
+        },
+        {
+          "iter": 40,
+          "current_cost": 11.74279518038959,
+          "best_cost": 11.699658734331654,
+          "move": "or-opt move [2, 1] from route 0 to route 0 at pos 5",
+          "tabu_size": 16,
+          "tabu_tenure": 5,
+          "non_imp": 15,
+          "shake_counter": null
+        },
+        {
+          "iter": 41,
+          "current_cost": 11.70608419041134,
+          "best_cost": 11.699658734331654,
+          "move": "or-opt move [2] from route 0 to route 0 at pos 5",
+          "tabu_size": 15,
+          "tabu_tenure": 5,
+          "non_imp": 16,
+          "shake_counter": null
+        },
+        {
+          "iter": 42,
+          "current_cost": 11.733564512855496,
+          "best_cost": 11.699658734331654,
+          "move": "swap customers 6 and 8 in route 0",
+          "tabu_size": 16,
+          "tabu_tenure": 5,
+          "non_imp": 17,
+          "shake_counter": null
+        },
+        {
+          "iter": 43,
+          "current_cost": 11.71195313855842,
+          "best_cost": 11.699658734331654,
+          "move": "or-opt move [4] from route 0 to route 0 at pos 1",
+          "tabu_size": 16,
+          "tabu_tenure": 5,
+          "non_imp": 18,
+          "shake_counter": null
+        },
+        {
+          "iter": 44,
+          "current_cost": 11.706934713868035,
+          "best_cost": 11.699658734331654,
+          "move": "or-opt move [5] from route 0 to route 0 at pos 4",
+          "tabu_size": 16,
+          "tabu_tenure": 5,
+          "non_imp": 19,
+          "shake_counter": null
+        },
+        {
+          "iter": 45,
+          "current_cost": 11.939339010885933,
+          "best_cost": 11.699658734331654,
+          "move": "or-opt move [1] from route 0 to route 0 at pos 2",
+          "tabu_size": 16,
+          "tabu_tenure": 5,
+          "non_imp": 0,
+          "shake_counter": null
+        },
+        {
+          "iter": 46,
+          "current_cost": 10.811288298348357,
+          "best_cost": 10.811288298348357,
+          "move": "cross suffix at 5 (route 0) with suffix at 1 (route 1)",
+          "tabu_size": 15,
+          "tabu_tenure": 5,
+          "non_imp": 0,
+          "shake_counter": null
+        },
+        {
+          "iter": 47,
+          "current_cost": 10.775399351656066,
+          "best_cost": 10.775399351656066,
+          "move": "or-opt move [1] from route 0 to route 0 at pos 4",
+          "tabu_size": 14,
+          "tabu_tenure": 5,
+          "non_imp": 0,
+          "shake_counter": null
+        },
+        {
+          "iter": 48,
+          "current_cost": 10.750148763444894,
+          "best_cost": 10.750148763444894,
+          "move": "or-opt move [9, 7] from route 0 to route 0 at pos 0",
+          "tabu_size": 14,
+          "tabu_tenure": 5,
+          "non_imp": 0,
+          "shake_counter": null
+        },
+        {
+          "iter": 49,
+          "current_cost": 10.750148763444894,
+          "best_cost": 10.750148763444894,
+          "move": "or-opt move [8] from route 1 to route 1 at pos 2",
+          "tabu_size": 14,
+          "tabu_tenure": 5,
+          "non_imp": 1,
+          "shake_counter": null
+        },
+        {
+          "iter": 50,
+          "current_cost": 10.750148763444894,
+          "best_cost": 10.750148763444894,
+          "move": "2-opt reverse segment [2:7] in route 0",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 2,
+          "shake_counter": null
+        },
+        {
+          "iter": 51,
+          "current_cost": 10.76203700446814,
+          "best_cost": 10.750148763444894,
+          "move": "or-opt move [9] from route 0 to route 0 at pos 2",
+          "tabu_size": 18,
+          "tabu_tenure": 5,
+          "non_imp": 3,
+          "shake_counter": null
+        },
+        {
+          "iter": 52,
+          "current_cost": 10.725923870860731,
+          "best_cost": 10.725923870860731,
+          "move": "2-opt reverse segment [2:6] in route 0",
+          "tabu_size": 20,
+          "tabu_tenure": 5,
+          "non_imp": 0,
+          "shake_counter": null
+        },
+        {
+          "iter": 53,
+          "current_cost": 10.790104365904009,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [7, 9] from route 0 to route 0 at pos 7",
+          "tabu_size": 20,
+          "tabu_tenure": 5,
+          "non_imp": 1,
+          "shake_counter": null
+        },
+        {
+          "iter": 54,
+          "current_cost": 10.790104365904009,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [6] from route 1 to route 1 at pos 2",
+          "tabu_size": 20,
+          "tabu_tenure": 5,
+          "non_imp": 2,
+          "shake_counter": null
+        },
+        {
+          "iter": 55,
+          "current_cost": 10.762059411233944,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [4] from route 0 to route 0 at pos 0",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 3,
+          "shake_counter": null
+        },
+        {
+          "iter": 56,
+          "current_cost": 10.775399351656066,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [7] from route 0 to route 0 at pos 7",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 4,
+          "shake_counter": null
+        },
+        {
+          "iter": 57,
+          "current_cost": 10.750148763444894,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [9, 7] from route 0 to route 0 at pos 0",
+          "tabu_size": 15,
+          "tabu_tenure": 5,
+          "non_imp": 5,
+          "shake_counter": null
+        },
+        {
+          "iter": 58,
+          "current_cost": 10.750148763444894,
+          "best_cost": 10.725923870860731,
+          "move": "2-opt reverse segment [2:7] in route 0",
+          "tabu_size": 18,
+          "tabu_tenure": 5,
+          "non_imp": 6,
+          "shake_counter": null
+        },
+        {
+          "iter": 59,
+          "current_cost": 10.750148763444894,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [8] from route 1 to route 1 at pos 2",
+          "tabu_size": 18,
+          "tabu_tenure": 5,
+          "non_imp": 7,
+          "shake_counter": null
+        },
+        {
+          "iter": 60,
+          "current_cost": 10.786037710137183,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [1] from route 0 to route 0 at pos 6",
+          "tabu_size": 18,
+          "tabu_tenure": 5,
+          "non_imp": 8,
+          "shake_counter": null
+        },
+        {
+          "iter": 61,
+          "current_cost": 10.79792595116043,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [9] from route 0 to route 0 at pos 2",
+          "tabu_size": 18,
+          "tabu_tenure": 5,
+          "non_imp": 9,
+          "shake_counter": null
+        },
+        {
+          "iter": 62,
+          "current_cost": 10.800403728176335,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [7, 9] from route 0 to route 0 at pos 7",
+          "tabu_size": 18,
+          "tabu_tenure": 5,
+          "non_imp": 10,
+          "shake_counter": null
+        },
+        {
+          "iter": 63,
+          "current_cost": 10.767077835924326,
+          "best_cost": 10.725923870860731,
+          "move": "swap customers 2 and 4 in route 0",
+          "tabu_size": 16,
+          "tabu_tenure": 5,
+          "non_imp": 11,
+          "shake_counter": null
+        },
+        {
+          "iter": 64,
+          "current_cost": 10.762059411233944,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [5] from route 0 to route 0 at pos 3",
+          "tabu_size": 16,
+          "tabu_tenure": 5,
+          "non_imp": 12,
+          "shake_counter": null
+        },
+        {
+          "iter": 65,
+          "current_cost": 10.762059411233944,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [6] from route 1 to route 1 at pos 2",
+          "tabu_size": 16,
+          "tabu_tenure": 5,
+          "non_imp": 13,
+          "shake_counter": null
+        },
+        {
+          "iter": 66,
+          "current_cost": 10.775399351656066,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [7] from route 0 to route 0 at pos 7",
+          "tabu_size": 16,
+          "tabu_tenure": 5,
+          "non_imp": 14,
+          "shake_counter": null
+        },
+        {
+          "iter": 67,
+          "current_cost": 10.750148763444894,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [9, 7] from route 0 to route 0 at pos 0",
+          "tabu_size": 16,
+          "tabu_tenure": 5,
+          "non_imp": 15,
+          "shake_counter": null
+        },
+        {
+          "iter": 68,
+          "current_cost": 10.779062503526857,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [4] from route 0 to route 0 at pos 7",
+          "tabu_size": 15,
+          "tabu_tenure": 5,
+          "non_imp": 16,
+          "shake_counter": null
+        },
+        {
+          "iter": 69,
+          "current_cost": 10.750148763444894,
+          "best_cost": 10.725923870860731,
+          "move": "2-opt reverse segment [2:6] in route 0",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 17,
+          "shake_counter": null
+        },
+        {
+          "iter": 70,
+          "current_cost": 10.750148763444894,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [8] from route 1 to route 1 at pos 2",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 18,
+          "shake_counter": null
+        },
+        {
+          "iter": 71,
+          "current_cost": 10.76203700446814,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [9] from route 0 to route 0 at pos 2",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 19,
+          "shake_counter": null
+        },
+        {
+          "iter": 72,
+          "current_cost": 11.975770448954332,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [7, 9] from route 0 to route 0 at pos 7",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 0,
+          "shake_counter": null
+        },
+        {
+          "iter": 73,
+          "current_cost": 10.764514781484044,
+          "best_cost": 10.725923870860731,
+          "move": "relocate customer 7 from route 1 to route 0",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 1,
+          "shake_counter": null
+        },
+        {
+          "iter": 74,
+          "current_cost": 10.762059411233944,
+          "best_cost": 10.725923870860731,
+          "move": "2-opt reverse segment [0:5] in route 0",
+          "tabu_size": 18,
+          "tabu_tenure": 5,
+          "non_imp": 2,
+          "shake_counter": null
+        },
+        {
+          "iter": 75,
+          "current_cost": 10.762059411233944,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [6] from route 1 to route 1 at pos 2",
+          "tabu_size": 18,
+          "tabu_tenure": 5,
+          "non_imp": 3,
+          "shake_counter": null
+        },
+        {
+          "iter": 76,
+          "current_cost": 10.775399351656066,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [7] from route 0 to route 0 at pos 7",
+          "tabu_size": 18,
+          "tabu_tenure": 5,
+          "non_imp": 4,
+          "shake_counter": null
+        },
+        {
+          "iter": 77,
+          "current_cost": 10.750148763444894,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [9, 7] from route 0 to route 0 at pos 0",
+          "tabu_size": 18,
+          "tabu_tenure": 5,
+          "non_imp": 5,
+          "shake_counter": null
+        },
+        {
+          "iter": 78,
+          "current_cost": 10.779062503526857,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [4] from route 0 to route 0 at pos 7",
+          "tabu_size": 18,
+          "tabu_tenure": 5,
+          "non_imp": 6,
+          "shake_counter": null
+        },
+        {
+          "iter": 79,
+          "current_cost": 10.750148763444894,
+          "best_cost": 10.725923870860731,
+          "move": "2-opt reverse segment [2:6] in route 0",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 7,
+          "shake_counter": null
+        },
+        {
+          "iter": 80,
+          "current_cost": 10.750148763444894,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [8] from route 1 to route 1 at pos 2",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 8,
+          "shake_counter": null
+        },
+        {
+          "iter": 81,
+          "current_cost": 10.76203700446814,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [9] from route 0 to route 0 at pos 2",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 9,
+          "shake_counter": null
+        },
+        {
+          "iter": 82,
+          "current_cost": 10.764514781484044,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [7, 9] from route 0 to route 0 at pos 7",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 10,
+          "shake_counter": null
+        },
+        {
+          "iter": 83,
+          "current_cost": 10.790973151315907,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [4] from route 0 to route 0 at pos 0",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 11,
+          "shake_counter": null
+        },
+        {
+          "iter": 84,
+          "current_cost": 10.762059411233944,
+          "best_cost": 10.725923870860731,
+          "move": "2-opt reverse segment [1:5] in route 0",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 12,
+          "shake_counter": null
+        },
+        {
+          "iter": 85,
+          "current_cost": 10.762059411233944,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [6] from route 1 to route 1 at pos 2",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 13,
+          "shake_counter": null
+        },
+        {
+          "iter": 86,
+          "current_cost": 10.775399351656066,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [7] from route 0 to route 0 at pos 7",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 14,
+          "shake_counter": null
+        },
+        {
+          "iter": 87,
+          "current_cost": 10.750148763444894,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [9, 7] from route 0 to route 0 at pos 0",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 15,
+          "shake_counter": null
+        },
+        {
+          "iter": 88,
+          "current_cost": 10.779062503526857,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [4] from route 0 to route 0 at pos 7",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 16,
+          "shake_counter": null
+        },
+        {
+          "iter": 89,
+          "current_cost": 10.750148763444894,
+          "best_cost": 10.725923870860731,
+          "move": "2-opt reverse segment [2:6] in route 0",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 17,
+          "shake_counter": null
+        },
+        {
+          "iter": 90,
+          "current_cost": 10.750148763444894,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [8] from route 1 to route 1 at pos 2",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 18,
+          "shake_counter": null
+        },
+        {
+          "iter": 91,
+          "current_cost": 10.76203700446814,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [9] from route 0 to route 0 at pos 2",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 19,
+          "shake_counter": null
+        },
+        {
+          "iter": 92,
+          "current_cost": 13.905430169932274,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [7, 9] from route 0 to route 0 at pos 7",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 0,
+          "shake_counter": null
+        },
+        {
+          "iter": 93,
+          "current_cost": 10.764514781484044,
+          "best_cost": 10.725923870860731,
+          "move": "relocate customer 1 from route 1 to route 0",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 1,
+          "shake_counter": null
+        },
+        {
+          "iter": 94,
+          "current_cost": 10.762059411233944,
+          "best_cost": 10.725923870860731,
+          "move": "2-opt reverse segment [0:5] in route 0",
+          "tabu_size": 18,
+          "tabu_tenure": 5,
+          "non_imp": 2,
+          "shake_counter": null
+        },
+        {
+          "iter": 95,
+          "current_cost": 10.762059411233944,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [6] from route 1 to route 1 at pos 2",
+          "tabu_size": 18,
+          "tabu_tenure": 5,
+          "non_imp": 3,
+          "shake_counter": null
+        },
+        {
+          "iter": 96,
+          "current_cost": 10.775399351656066,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [7] from route 0 to route 0 at pos 7",
+          "tabu_size": 18,
+          "tabu_tenure": 5,
+          "non_imp": 4,
+          "shake_counter": null
+        },
+        {
+          "iter": 97,
+          "current_cost": 10.750148763444894,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [9, 7] from route 0 to route 0 at pos 0",
+          "tabu_size": 18,
+          "tabu_tenure": 5,
+          "non_imp": 5,
+          "shake_counter": null
+        },
+        {
+          "iter": 98,
+          "current_cost": 10.779062503526857,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [4] from route 0 to route 0 at pos 7",
+          "tabu_size": 18,
+          "tabu_tenure": 5,
+          "non_imp": 6,
+          "shake_counter": null
+        },
+        {
+          "iter": 99,
+          "current_cost": 10.750148763444894,
+          "best_cost": 10.725923870860731,
+          "move": "2-opt reverse segment [2:6] in route 0",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 7,
+          "shake_counter": null
+        }
+      ],
+      "shake_events": [
+        {
+          "iteration": 25,
+          "before_routes": [
+            [
+              6,
+              4,
+              3,
+              5,
+              1,
+              2,
+              8
+            ],
+            [
+              9,
+              7
+            ],
+            [
+              10
+            ],
+            []
+          ],
+          "after_routes": [
+            [
+              6,
+              4,
+              3,
+              5,
+              1,
+              2,
+              8
+            ],
+            [
+              9
+            ],
+            [
+              7,
+              10
+            ],
+            []
+          ],
+          "shaken_cost": 15.635724953587621,
+          "feasible": true,
+          "changed": true
+        },
+        {
+          "iteration": 45,
+          "before_routes": [
+            [
+              8,
+              4,
+              1,
+              3,
+              5,
+              2,
+              6
+            ],
+            [
+              9,
+              7
+            ],
+            [
+              10
+            ],
+            []
+          ],
+          "after_routes": [
+            [
+              4,
+              1,
+              3,
+              5,
+              2,
+              6
+            ],
+            [
+              8,
+              9,
+              7
+            ],
+            [
+              10
+            ],
+            []
+          ],
+          "shaken_cost": 11.939339010885933,
+          "feasible": true,
+          "changed": true
+        },
+        {
+          "iteration": 72,
+          "before_routes": [
+            [
+              2,
+              1,
+              5,
+              3,
+              4,
+              7,
+              9
+            ],
+            [
+              6,
+              8
+            ],
+            [
+              10
+            ],
+            []
+          ],
+          "after_routes": [
+            [
+              2,
+              1,
+              5,
+              3,
+              4,
+              9
+            ],
+            [
+              6,
+              7,
+              8
+            ],
+            [
+              10
+            ],
+            []
+          ],
+          "shaken_cost": 11.975770448954332,
+          "feasible": true,
+          "changed": true
+        },
+        {
+          "iteration": 92,
+          "before_routes": [
+            [
+              2,
+              1,
+              5,
+              3,
+              4,
+              7,
+              9
+            ],
+            [
+              6,
+              8
+            ],
+            [
+              10
+            ],
+            []
+          ],
+          "after_routes": [
+            [
+              2,
+              5,
+              3,
+              4,
+              7,
+              9
+            ],
+            [
+              1,
+              6,
+              8
+            ],
+            [
+              10
+            ],
+            []
+          ],
+          "shaken_cost": 13.905430169932274,
+          "feasible": true,
+          "changed": true
+        }
+      ],
+      "start_seed": 4096271624
+    },
+    {
+      "start_index": 2,
+      "best_cost": 10.725923870860731,
+      "vehicles": 3,
+      "routes": [
+        [
+          7,
+          9,
+          3,
+          5,
+          1,
+          2,
+          4
+        ],
+        [
+          6,
+          8
+        ],
+        [
+          10
+        ]
+      ],
+      "stats": {
+        "moves_generated": 25989,
+        "moves_evaluated": 16915,
+        "moves_skipped_validity": 9074,
+        "moves_skipped_tabu": 5865,
+        "moves_before_deduplication": 40705,
+        "moves_before_sampling": 25989,
+        "moves_duplicates_removed": 14716,
+        "shakes": 4,
+        "shakes_successful": 4,
+        "shake_steps_accepted": 4,
+        "shake_candidates_evaluated": 6,
+        "shake_candidates_skipped_validity": 2,
+        "frvcp_construction_calls": 400,
+        "frvcp_construction_time_sec": 0.09269624459557235,
+        "frvcp_search_calls": 8118,
+        "frvcp_search_time_sec": 2.220590420998633,
+        "frvcp_calls": 8518,
+        "frvcp_total_time_sec": 2.3132866655942053,
+        "iterations_total": 100,
+        "starts_completed": 1,
+        "best_start_iterations": 100,
+        "accepted_iterations": 100
+      },
+      "history": [
+        {
+          "iter": 0,
+          "current_cost": 11.772551849555276,
+          "best_cost": 11.772551849555276,
+          "move": "exchange customer 7 (route 0) with 2 (route 1)",
+          "tabu_size": 4,
+          "tabu_tenure": 5,
+          "non_imp": 0,
+          "shake_counter": null
+        },
+        {
+          "iter": 1,
+          "current_cost": 10.860643550966607,
+          "best_cost": 10.860643550966607,
+          "move": "cross suffix at 5 (route 0) with suffix at 1 (route 1)",
+          "tabu_size": 6,
+          "tabu_tenure": 5,
+          "non_imp": 0,
+          "shake_counter": null
+        },
+        {
+          "iter": 2,
+          "current_cost": 10.764514781484044,
+          "best_cost": 10.764514781484044,
+          "move": "relocate customer 10 from route 1 to route 2",
+          "tabu_size": 7,
+          "tabu_tenure": 5,
+          "non_imp": 0,
+          "shake_counter": null
+        },
+        {
+          "iter": 3,
+          "current_cost": 10.750148763444894,
+          "best_cost": 10.750148763444894,
+          "move": "2-opt reverse segment [0:7] in route 0",
+          "tabu_size": 15,
+          "tabu_tenure": 5,
+          "non_imp": 0,
+          "shake_counter": null
+        },
+        {
+          "iter": 4,
+          "current_cost": 10.750148763444894,
+          "best_cost": 10.750148763444894,
+          "move": "or-opt move [8] from route 1 to route 1 at pos 2",
+          "tabu_size": 18,
+          "tabu_tenure": 5,
+          "non_imp": 1,
+          "shake_counter": null
+        },
+        {
+          "iter": 5,
+          "current_cost": 10.775399351656066,
+          "best_cost": 10.750148763444894,
+          "move": "or-opt move [9, 7] from route 0 to route 0 at pos 7",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 2,
+          "shake_counter": null
+        },
+        {
+          "iter": 6,
+          "current_cost": 10.80344430632613,
+          "best_cost": 10.750148763444894,
+          "move": "or-opt move [4] from route 0 to route 0 at pos 5",
+          "tabu_size": 18,
+          "tabu_tenure": 5,
+          "non_imp": 3,
+          "shake_counter": null
+        },
+        {
+          "iter": 7,
+          "current_cost": 10.83634255254187,
+          "best_cost": 10.750148763444894,
+          "move": "or-opt move [1] from route 0 to route 0 at pos 0",
+          "tabu_size": 20,
+          "tabu_tenure": 5,
+          "non_imp": 4,
+          "shake_counter": null
+        },
+        {
+          "iter": 8,
+          "current_cost": 10.782873146596552,
+          "best_cost": 10.750148763444894,
+          "move": "or-opt move [2] from route 0 to route 0 at pos 0",
+          "tabu_size": 15,
+          "tabu_tenure": 5,
+          "non_imp": 5,
+          "shake_counter": null
+        },
+        {
+          "iter": 9,
+          "current_cost": 10.769533206174426,
+          "best_cost": 10.750148763444894,
+          "move": "or-opt move [9] from route 0 to route 0 at pos 7",
+          "tabu_size": 15,
+          "tabu_tenure": 5,
+          "non_imp": 6,
+          "shake_counter": null
+        },
+        {
+          "iter": 10,
+          "current_cost": 10.764514781484044,
+          "best_cost": 10.750148763444894,
+          "move": "or-opt move [3] from route 0 to route 0 at pos 4",
+          "tabu_size": 15,
+          "tabu_tenure": 5,
+          "non_imp": 7,
+          "shake_counter": null
+        },
+        {
+          "iter": 11,
+          "current_cost": 10.76203700446814,
+          "best_cost": 10.750148763444894,
+          "move": "or-opt move [7, 9] from route 0 to route 0 at pos 0",
+          "tabu_size": 15,
+          "tabu_tenure": 5,
+          "non_imp": 8,
+          "shake_counter": null
+        },
+        {
+          "iter": 12,
+          "current_cost": 10.725923870860731,
+          "best_cost": 10.725923870860731,
+          "move": "2-opt reverse segment [2:6] in route 0",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 0,
+          "shake_counter": null
+        },
+        {
+          "iter": 13,
+          "current_cost": 10.725923870860731,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [6] from route 1 to route 1 at pos 2",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 1,
+          "shake_counter": null
+        },
+        {
+          "iter": 14,
+          "current_cost": 10.76203700446814,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [4] from route 0 to route 0 at pos 2",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 2,
+          "shake_counter": null
+        },
+        {
+          "iter": 15,
+          "current_cost": 10.750148763444894,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [7] from route 0 to route 0 at pos 2",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 3,
+          "shake_counter": null
+        },
+        {
+          "iter": 16,
+          "current_cost": 10.775399351656066,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [9, 7] from route 0 to route 0 at pos 7",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 4,
+          "shake_counter": null
+        },
+        {
+          "iter": 17,
+          "current_cost": 10.77785472190617,
+          "best_cost": 10.725923870860731,
+          "move": "2-opt reverse segment [0:5] in route 0",
+          "tabu_size": 18,
+          "tabu_tenure": 5,
+          "non_imp": 5,
+          "shake_counter": null
+        },
+        {
+          "iter": 18,
+          "current_cost": 10.77785472190617,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [8] from route 1 to route 1 at pos 2",
+          "tabu_size": 18,
+          "tabu_tenure": 5,
+          "non_imp": 6,
+          "shake_counter": null
+        },
+        {
+          "iter": 19,
+          "current_cost": 10.813743668598457,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [1] from route 0 to route 0 at pos 4",
+          "tabu_size": 18,
+          "tabu_tenure": 5,
+          "non_imp": 7,
+          "shake_counter": null
+        },
+        {
+          "iter": 20,
+          "current_cost": 10.800403728176335,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [9] from route 0 to route 0 at pos 7",
+          "tabu_size": 18,
+          "tabu_tenure": 5,
+          "non_imp": 8,
+          "shake_counter": null
+        },
+        {
+          "iter": 21,
+          "current_cost": 10.79792595116043,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [7, 9] from route 0 to route 0 at pos 0",
+          "tabu_size": 18,
+          "tabu_tenure": 5,
+          "non_imp": 9,
+          "shake_counter": null
+        },
+        {
+          "iter": 22,
+          "current_cost": 10.767055429158523,
+          "best_cost": 10.725923870860731,
+          "move": "swap customers 2 and 4 in route 0",
+          "tabu_size": 16,
+          "tabu_tenure": 5,
+          "non_imp": 10,
+          "shake_counter": null
+        },
+        {
+          "iter": 23,
+          "current_cost": 10.76203700446814,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [5] from route 0 to route 0 at pos 5",
+          "tabu_size": 16,
+          "tabu_tenure": 5,
+          "non_imp": 11,
+          "shake_counter": null
+        },
+        {
+          "iter": 24,
+          "current_cost": 10.76203700446814,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [6] from route 1 to route 1 at pos 2",
+          "tabu_size": 16,
+          "tabu_tenure": 5,
+          "non_imp": 12,
+          "shake_counter": null
+        },
+        {
+          "iter": 25,
+          "current_cost": 10.750148763444894,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [7] from route 0 to route 0 at pos 2",
+          "tabu_size": 16,
+          "tabu_tenure": 5,
+          "non_imp": 13,
+          "shake_counter": null
+        },
+        {
+          "iter": 26,
+          "current_cost": 10.775399351656066,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [9, 7] from route 0 to route 0 at pos 7",
+          "tabu_size": 16,
+          "tabu_tenure": 5,
+          "non_imp": 14,
+          "shake_counter": null
+        },
+        {
+          "iter": 27,
+          "current_cost": 10.80344430632613,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [4] from route 0 to route 0 at pos 5",
+          "tabu_size": 15,
+          "tabu_tenure": 5,
+          "non_imp": 15,
+          "shake_counter": null
+        },
+        {
+          "iter": 28,
+          "current_cost": 10.77785472190617,
+          "best_cost": 10.725923870860731,
+          "move": "2-opt reverse segment [0:4] in route 0",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 16,
+          "shake_counter": null
+        },
+        {
+          "iter": 29,
+          "current_cost": 10.77785472190617,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [8] from route 1 to route 1 at pos 2",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 17,
+          "shake_counter": null
+        },
+        {
+          "iter": 30,
+          "current_cost": 10.764514781484044,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [9] from route 0 to route 0 at pos 7",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 18,
+          "shake_counter": null
+        },
+        {
+          "iter": 31,
+          "current_cost": 10.76203700446814,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [7, 9] from route 0 to route 0 at pos 0",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 19,
+          "shake_counter": null
+        },
+        {
+          "iter": 32,
+          "current_cost": 15.52952245959582,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [4] from route 0 to route 0 at pos 2",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 0,
+          "shake_counter": null
+        },
+        {
+          "iter": 33,
+          "current_cost": 10.788666803455602,
+          "best_cost": 10.725923870860731,
+          "move": "relocate customer 3 from route 2 to route 0",
+          "tabu_size": 15,
+          "tabu_tenure": 5,
+          "non_imp": 1,
+          "shake_counter": null
+        },
+        {
+          "iter": 34,
+          "current_cost": 10.767055429158523,
+          "best_cost": 10.725923870860731,
+          "move": "2-opt reverse segment [3:7] in route 0",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 2,
+          "shake_counter": null
+        },
+        {
+          "iter": 35,
+          "current_cost": 10.755167188135276,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [7] from route 0 to route 0 at pos 2",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 3,
+          "shake_counter": null
+        },
+        {
+          "iter": 36,
+          "current_cost": 10.755167188135276,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [6] from route 1 to route 1 at pos 2",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 4,
+          "shake_counter": null
+        },
+        {
+          "iter": 37,
+          "current_cost": 10.776778562432355,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [4] from route 0 to route 0 at pos 7",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 5,
+          "shake_counter": null
+        },
+        {
+          "iter": 38,
+          "current_cost": 10.786037710137183,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [2] from route 0 to route 0 at pos 2",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 6,
+          "shake_counter": null
+        },
+        {
+          "iter": 39,
+          "current_cost": 10.750148763444894,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [1] from route 0 to route 0 at pos 3",
+          "tabu_size": 15,
+          "tabu_tenure": 5,
+          "non_imp": 7,
+          "shake_counter": null
+        },
+        {
+          "iter": 40,
+          "current_cost": 10.755167188135276,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [5] from route 0 to route 0 at pos 6",
+          "tabu_size": 15,
+          "tabu_tenure": 5,
+          "non_imp": 8,
+          "shake_counter": null
+        },
+        {
+          "iter": 41,
+          "current_cost": 10.755167188135276,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [8] from route 1 to route 1 at pos 2",
+          "tabu_size": 15,
+          "tabu_tenure": 5,
+          "non_imp": 9,
+          "shake_counter": null
+        },
+        {
+          "iter": 42,
+          "current_cost": 10.767055429158523,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [9] from route 0 to route 0 at pos 2",
+          "tabu_size": 15,
+          "tabu_tenure": 5,
+          "non_imp": 10,
+          "shake_counter": null
+        },
+        {
+          "iter": 43,
+          "current_cost": 10.769533206174426,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [7, 9] from route 0 to route 0 at pos 7",
+          "tabu_size": 15,
+          "tabu_tenure": 5,
+          "non_imp": 11,
+          "shake_counter": null
+        },
+        {
+          "iter": 44,
+          "current_cost": 10.788689210221406,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [4] from route 0 to route 0 at pos 0",
+          "tabu_size": 15,
+          "tabu_tenure": 5,
+          "non_imp": 12,
+          "shake_counter": null
+        },
+        {
+          "iter": 45,
+          "current_cost": 10.767077835924326,
+          "best_cost": 10.725923870860731,
+          "move": "2-opt reverse segment [1:5] in route 0",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 13,
+          "shake_counter": null
+        },
+        {
+          "iter": 46,
+          "current_cost": 10.767077835924326,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [6] from route 1 to route 1 at pos 2",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 14,
+          "shake_counter": null
+        },
+        {
+          "iter": 47,
+          "current_cost": 10.780417776346448,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [7] from route 0 to route 0 at pos 7",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 15,
+          "shake_counter": null
+        },
+        {
+          "iter": 48,
+          "current_cost": 10.755167188135276,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [9, 7] from route 0 to route 0 at pos 0",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 16,
+          "shake_counter": null
+        },
+        {
+          "iter": 49,
+          "current_cost": 10.776778562432355,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [4] from route 0 to route 0 at pos 7",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 17,
+          "shake_counter": null
+        },
+        {
+          "iter": 50,
+          "current_cost": 10.755167188135276,
+          "best_cost": 10.725923870860731,
+          "move": "2-opt reverse segment [2:6] in route 0",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 18,
+          "shake_counter": null
+        },
+        {
+          "iter": 51,
+          "current_cost": 10.755167188135276,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [8] from route 1 to route 1 at pos 2",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 19,
+          "shake_counter": null
+        },
+        {
+          "iter": 52,
+          "current_cost": 15.49351828318251,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [9] from route 0 to route 0 at pos 2",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 0,
+          "shake_counter": null
+        },
+        {
+          "iter": 53,
+          "current_cost": 10.767055429158523,
+          "best_cost": 10.725923870860731,
+          "move": "relocate customer 5 from route 3 to route 0",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 1,
+          "shake_counter": null
+        },
+        {
+          "iter": 54,
+          "current_cost": 10.769533206174426,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [7, 9] from route 0 to route 0 at pos 7",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 2,
+          "shake_counter": null
+        },
+        {
+          "iter": 55,
+          "current_cost": 10.767077835924326,
+          "best_cost": 10.725923870860731,
+          "move": "2-opt reverse segment [0:5] in route 0",
+          "tabu_size": 18,
+          "tabu_tenure": 5,
+          "non_imp": 3,
+          "shake_counter": null
+        },
+        {
+          "iter": 56,
+          "current_cost": 10.767077835924326,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [6] from route 1 to route 1 at pos 2",
+          "tabu_size": 18,
+          "tabu_tenure": 5,
+          "non_imp": 4,
+          "shake_counter": null
+        },
+        {
+          "iter": 57,
+          "current_cost": 10.780417776346448,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [7] from route 0 to route 0 at pos 7",
+          "tabu_size": 18,
+          "tabu_tenure": 5,
+          "non_imp": 5,
+          "shake_counter": null
+        },
+        {
+          "iter": 58,
+          "current_cost": 10.755167188135276,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [9, 7] from route 0 to route 0 at pos 0",
+          "tabu_size": 18,
+          "tabu_tenure": 5,
+          "non_imp": 6,
+          "shake_counter": null
+        },
+        {
+          "iter": 59,
+          "current_cost": 10.776778562432355,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [4] from route 0 to route 0 at pos 7",
+          "tabu_size": 18,
+          "tabu_tenure": 5,
+          "non_imp": 7,
+          "shake_counter": null
+        },
+        {
+          "iter": 60,
+          "current_cost": 10.755167188135276,
+          "best_cost": 10.725923870860731,
+          "move": "2-opt reverse segment [2:6] in route 0",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 8,
+          "shake_counter": null
+        },
+        {
+          "iter": 61,
+          "current_cost": 10.755167188135276,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [8] from route 1 to route 1 at pos 2",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 9,
+          "shake_counter": null
+        },
+        {
+          "iter": 62,
+          "current_cost": 10.767055429158523,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [9] from route 0 to route 0 at pos 2",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 10,
+          "shake_counter": null
+        },
+        {
+          "iter": 63,
+          "current_cost": 10.769533206174426,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [7, 9] from route 0 to route 0 at pos 7",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 11,
+          "shake_counter": null
+        },
+        {
+          "iter": 64,
+          "current_cost": 10.788689210221406,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [4] from route 0 to route 0 at pos 0",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 12,
+          "shake_counter": null
+        },
+        {
+          "iter": 65,
+          "current_cost": 10.767077835924326,
+          "best_cost": 10.725923870860731,
+          "move": "2-opt reverse segment [1:5] in route 0",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 13,
+          "shake_counter": null
+        },
+        {
+          "iter": 66,
+          "current_cost": 10.767077835924326,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [6] from route 1 to route 1 at pos 2",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 14,
+          "shake_counter": null
+        },
+        {
+          "iter": 67,
+          "current_cost": 10.780417776346448,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [7] from route 0 to route 0 at pos 7",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 15,
+          "shake_counter": null
+        },
+        {
+          "iter": 68,
+          "current_cost": 10.755167188135276,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [9, 7] from route 0 to route 0 at pos 0",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 16,
+          "shake_counter": null
+        },
+        {
+          "iter": 69,
+          "current_cost": 10.776778562432355,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [4] from route 0 to route 0 at pos 7",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 17,
+          "shake_counter": null
+        },
+        {
+          "iter": 70,
+          "current_cost": 10.755167188135276,
+          "best_cost": 10.725923870860731,
+          "move": "2-opt reverse segment [2:6] in route 0",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 18,
+          "shake_counter": null
+        },
+        {
+          "iter": 71,
+          "current_cost": 10.755167188135276,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [8] from route 1 to route 1 at pos 2",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 19,
+          "shake_counter": null
+        },
+        {
+          "iter": 72,
+          "current_cost": 15.500252245922514,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [9] from route 0 to route 0 at pos 2",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 0,
+          "shake_counter": null
+        },
+        {
+          "iter": 73,
+          "current_cost": 10.767055429158523,
+          "best_cost": 10.725923870860731,
+          "move": "relocate customer 2 from route 3 to route 0",
+          "tabu_size": 16,
+          "tabu_tenure": 5,
+          "non_imp": 1,
+          "shake_counter": null
+        },
+        {
+          "iter": 74,
+          "current_cost": 10.779514236417743,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [2, 1] from route 0 to route 0 at pos 6",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 2,
+          "shake_counter": null
+        },
+        {
+          "iter": 75,
+          "current_cost": 10.725923870860731,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [2] from route 0 to route 0 at pos 6",
+          "tabu_size": 15,
+          "tabu_tenure": 5,
+          "non_imp": 3,
+          "shake_counter": null
+        },
+        {
+          "iter": 76,
+          "current_cost": 10.725923870860731,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [6] from route 1 to route 1 at pos 2",
+          "tabu_size": 15,
+          "tabu_tenure": 5,
+          "non_imp": 4,
+          "shake_counter": null
+        },
+        {
+          "iter": 77,
+          "current_cost": 10.779062503526857,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [7] from route 0 to route 0 at pos 2",
+          "tabu_size": 15,
+          "tabu_tenure": 5,
+          "non_imp": 5,
+          "shake_counter": null
+        },
+        {
+          "iter": 78,
+          "current_cost": 10.750148763444894,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [4] from route 0 to route 0 at pos 2",
+          "tabu_size": 15,
+          "tabu_tenure": 5,
+          "non_imp": 6,
+          "shake_counter": null
+        },
+        {
+          "iter": 79,
+          "current_cost": 10.755167188135276,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [3] from route 0 to route 0 at pos 5",
+          "tabu_size": 15,
+          "tabu_tenure": 5,
+          "non_imp": 7,
+          "shake_counter": null
+        },
+        {
+          "iter": 80,
+          "current_cost": 10.780417776346448,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [9, 7] from route 0 to route 0 at pos 7",
+          "tabu_size": 15,
+          "tabu_tenure": 5,
+          "non_imp": 8,
+          "shake_counter": null
+        },
+        {
+          "iter": 81,
+          "current_cost": 10.780417776346448,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [8] from route 1 to route 1 at pos 2",
+          "tabu_size": 15,
+          "tabu_tenure": 5,
+          "non_imp": 9,
+          "shake_counter": null
+        },
+        {
+          "iter": 82,
+          "current_cost": 10.767077835924326,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [9] from route 0 to route 0 at pos 7",
+          "tabu_size": 15,
+          "tabu_tenure": 5,
+          "non_imp": 10,
+          "shake_counter": null
+        },
+        {
+          "iter": 83,
+          "current_cost": 10.780910108608417,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [4] from route 0 to route 0 at pos 5",
+          "tabu_size": 15,
+          "tabu_tenure": 5,
+          "non_imp": 11,
+          "shake_counter": null
+        },
+        {
+          "iter": 84,
+          "current_cost": 10.769533206174426,
+          "best_cost": 10.725923870860731,
+          "move": "2-opt reverse segment [0:4] in route 0",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 12,
+          "shake_counter": null
+        },
+        {
+          "iter": 85,
+          "current_cost": 10.767055429158523,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [7, 9] from route 0 to route 0 at pos 0",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 13,
+          "shake_counter": null
+        },
+        {
+          "iter": 86,
+          "current_cost": 10.767055429158523,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [6] from route 1 to route 1 at pos 2",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 14,
+          "shake_counter": null
+        },
+        {
+          "iter": 87,
+          "current_cost": 10.755167188135276,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [7] from route 0 to route 0 at pos 2",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 15,
+          "shake_counter": null
+        },
+        {
+          "iter": 88,
+          "current_cost": 10.776778562432355,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [4] from route 0 to route 0 at pos 2",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 16,
+          "shake_counter": null
+        },
+        {
+          "iter": 89,
+          "current_cost": 10.755167188135276,
+          "best_cost": 10.725923870860731,
+          "move": "2-opt reverse segment [3:7] in route 0",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 17,
+          "shake_counter": null
+        },
+        {
+          "iter": 90,
+          "current_cost": 10.780417776346448,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [9, 7] from route 0 to route 0 at pos 7",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 18,
+          "shake_counter": null
+        },
+        {
+          "iter": 91,
+          "current_cost": 10.780417776346448,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [8] from route 1 to route 1 at pos 2",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 19,
+          "shake_counter": null
+        },
+        {
+          "iter": 92,
+          "current_cost": 11.178503370724776,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [9] from route 0 to route 0 at pos 7",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 0,
+          "shake_counter": null
+        },
+        {
+          "iter": 93,
+          "current_cost": 10.767077835924326,
+          "best_cost": 10.725923870860731,
+          "move": "relocate customer 8 from route 1 to route 3",
+          "tabu_size": 14,
+          "tabu_tenure": 5,
+          "non_imp": 1,
+          "shake_counter": null
+        },
+        {
+          "iter": 94,
+          "current_cost": 10.762059411233944,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [5] from route 0 to route 0 at pos 3",
+          "tabu_size": 12,
+          "tabu_tenure": 5,
+          "non_imp": 2,
+          "shake_counter": null
+        },
+        {
+          "iter": 95,
+          "current_cost": 10.76203700446814,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [7, 9] from route 0 to route 0 at pos 0",
+          "tabu_size": 12,
+          "tabu_tenure": 5,
+          "non_imp": 3,
+          "shake_counter": null
+        },
+        {
+          "iter": 96,
+          "current_cost": 10.725923870860731,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [4] from route 0 to route 0 at pos 7",
+          "tabu_size": 14,
+          "tabu_tenure": 5,
+          "non_imp": 4,
+          "shake_counter": null
+        },
+        {
+          "iter": 97,
+          "current_cost": 10.779062503526857,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [7] from route 0 to route 0 at pos 2",
+          "tabu_size": 14,
+          "tabu_tenure": 5,
+          "non_imp": 5,
+          "shake_counter": null
+        },
+        {
+          "iter": 98,
+          "current_cost": 10.779062503526857,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [6] from route 2 to route 2 at pos 2",
+          "tabu_size": 15,
+          "tabu_tenure": 5,
+          "non_imp": 6,
+          "shake_counter": null
+        },
+        {
+          "iter": 99,
+          "current_cost": 10.750148763444894,
+          "best_cost": 10.725923870860731,
+          "move": "2-opt reverse segment [2:6] in route 0",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 7,
+          "shake_counter": null
+        }
+      ],
+      "shake_events": [
+        {
+          "iteration": 32,
+          "before_routes": [
+            [
+              7,
+              9,
+              4,
+              2,
+              1,
+              5,
+              3
+            ],
+            [
+              6,
+              8
+            ],
+            [
+              10
+            ],
+            []
+          ],
+          "after_routes": [
+            [
+              7,
+              9,
+              4,
+              2,
+              1,
+              5
+            ],
+            [
+              6,
+              8
+            ],
+            [
+              3,
+              10
+            ],
+            []
+          ],
+          "shaken_cost": 15.52952245959582,
+          "feasible": true,
+          "changed": true
+        },
+        {
+          "iteration": 52,
+          "before_routes": [
+            [
+              7,
+              9,
+              2,
+              1,
+              3,
+              5,
+              4
+            ],
+            [
+              6,
+              8
+            ],
+            [
+              10
+            ],
+            []
+          ],
+          "after_routes": [
+            [
+              7,
+              9,
+              2,
+              1,
+              3,
+              4
+            ],
+            [
+              6,
+              8
+            ],
+            [
+              10
+            ],
+            [
+              5
+            ],
+            []
+          ],
+          "shaken_cost": 15.49351828318251,
+          "feasible": true,
+          "changed": true
+        },
+        {
+          "iteration": 72,
+          "before_routes": [
+            [
+              7,
+              9,
+              2,
+              1,
+              3,
+              5,
+              4
+            ],
+            [
+              6,
+              8
+            ],
+            [
+              10
+            ],
+            []
+          ],
+          "after_routes": [
+            [
+              7,
+              9,
+              1,
+              3,
+              5,
+              4
+            ],
+            [
+              6,
+              8
+            ],
+            [
+              10
+            ],
+            [
+              2
+            ],
+            []
+          ],
+          "shaken_cost": 15.500252245922514,
+          "feasible": true,
+          "changed": true
+        },
+        {
+          "iteration": 92,
+          "before_routes": [
+            [
+              4,
+              5,
+              3,
+              1,
+              2,
+              7,
+              9
+            ],
+            [
+              6,
+              8
+            ],
+            [
+              10
+            ],
+            []
+          ],
+          "after_routes": [
+            [
+              4,
+              5,
+              3,
+              1,
+              2,
+              7,
+              9
+            ],
+            [
+              8
+            ],
+            [
+              10
+            ],
+            [
+              6
+            ],
+            []
+          ],
+          "shaken_cost": 11.178503370724776,
+          "feasible": true,
+          "changed": true
+        }
+      ],
+      "start_seed": 2280812547
+    },
+    {
+      "start_index": 3,
+      "best_cost": 10.725923870860731,
+      "vehicles": 3,
+      "routes": [
+        [
+          8,
+          6
+        ],
+        [
+          7,
+          9,
+          3,
+          5,
+          1,
+          2,
+          4
+        ],
+        [
+          10
+        ]
+      ],
+      "stats": {
+        "moves_generated": 26004,
+        "moves_evaluated": 16826,
+        "moves_skipped_validity": 9178,
+        "moves_skipped_tabu": 5351,
+        "moves_before_deduplication": 40693,
+        "moves_before_sampling": 26004,
+        "moves_duplicates_removed": 14689,
+        "shakes": 4,
+        "shakes_successful": 4,
+        "shake_steps_accepted": 4,
+        "shake_candidates_evaluated": 4,
+        "shake_candidates_skipped_validity": 3,
+        "frvcp_construction_calls": 519,
+        "frvcp_construction_time_sec": 0.11759508168324828,
+        "frvcp_search_calls": 10141,
+        "frvcp_search_time_sec": 2.8017528986092657,
+        "frvcp_calls": 10660,
+        "frvcp_total_time_sec": 2.919347980292514,
+        "iterations_total": 100,
+        "starts_completed": 1,
+        "best_start_iterations": 100,
+        "accepted_iterations": 100
+      },
+      "history": [
+        {
+          "iter": 0,
+          "current_cost": 10.99434192158617,
+          "best_cost": 10.99434192158617,
+          "move": "or-opt move [4, 5, 2] from route 0 to route 1 at pos 2",
+          "tabu_size": 3,
+          "tabu_tenure": 5,
+          "non_imp": 0,
+          "shake_counter": null
+        },
+        {
+          "iter": 1,
+          "current_cost": 10.873862525720181,
+          "best_cost": 10.873862525720181,
+          "move": "or-opt move [2] from route 1 to route 1 at pos 7",
+          "tabu_size": 6,
+          "tabu_tenure": 5,
+          "non_imp": 0,
+          "shake_counter": null
+        },
+        {
+          "iter": 2,
+          "current_cost": 10.767055429158523,
+          "best_cost": 10.767055429158523,
+          "move": "relocate customer 10 from route 0 to route 2",
+          "tabu_size": 7,
+          "tabu_tenure": 5,
+          "non_imp": 0,
+          "shake_counter": null
+        },
+        {
+          "iter": 3,
+          "current_cost": 10.755167188135276,
+          "best_cost": 10.755167188135276,
+          "move": "or-opt move [7] from route 1 to route 1 at pos 2",
+          "tabu_size": 10,
+          "tabu_tenure": 5,
+          "non_imp": 0,
+          "shake_counter": null
+        },
+        {
+          "iter": 4,
+          "current_cost": 10.750148763444894,
+          "best_cost": 10.750148763444894,
+          "move": "or-opt move [5] from route 1 to route 1 at pos 5",
+          "tabu_size": 13,
+          "tabu_tenure": 5,
+          "non_imp": 0,
+          "shake_counter": null
+        },
+        {
+          "iter": 5,
+          "current_cost": 10.750148763444894,
+          "best_cost": 10.750148763444894,
+          "move": "or-opt move [6] from route 0 to route 0 at pos 2",
+          "tabu_size": 13,
+          "tabu_tenure": 5,
+          "non_imp": 1,
+          "shake_counter": null
+        },
+        {
+          "iter": 6,
+          "current_cost": 10.775399351656066,
+          "best_cost": 10.750148763444894,
+          "move": "or-opt move [9, 7] from route 1 to route 1 at pos 7",
+          "tabu_size": 13,
+          "tabu_tenure": 5,
+          "non_imp": 2,
+          "shake_counter": null
+        },
+        {
+          "iter": 7,
+          "current_cost": 10.80344430632613,
+          "best_cost": 10.750148763444894,
+          "move": "or-opt move [4] from route 1 to route 1 at pos 5",
+          "tabu_size": 15,
+          "tabu_tenure": 5,
+          "non_imp": 3,
+          "shake_counter": null
+        },
+        {
+          "iter": 8,
+          "current_cost": 10.790104365904009,
+          "best_cost": 10.750148763444894,
+          "move": "or-opt move [9] from route 1 to route 1 at pos 7",
+          "tabu_size": 15,
+          "tabu_tenure": 5,
+          "non_imp": 4,
+          "shake_counter": null
+        },
+        {
+          "iter": 9,
+          "current_cost": 10.725923870860731,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [7, 9] from route 1 to route 1 at pos 0",
+          "tabu_size": 15,
+          "tabu_tenure": 5,
+          "non_imp": 0,
+          "shake_counter": null
+        },
+        {
+          "iter": 10,
+          "current_cost": 10.725923870860731,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [8] from route 0 to route 0 at pos 2",
+          "tabu_size": 15,
+          "tabu_tenure": 5,
+          "non_imp": 1,
+          "shake_counter": null
+        },
+        {
+          "iter": 11,
+          "current_cost": 10.76203700446814,
+          "best_cost": 10.725923870860731,
+          "move": "2-opt reverse segment [2:6] in route 1",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 2,
+          "shake_counter": null
+        },
+        {
+          "iter": 12,
+          "current_cost": 10.790950744550104,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [4] from route 1 to route 1 at pos 2",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 3,
+          "shake_counter": null
+        },
+        {
+          "iter": 13,
+          "current_cost": 10.779062503526857,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [7] from route 1 to route 1 at pos 2",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 4,
+          "shake_counter": null
+        },
+        {
+          "iter": 14,
+          "current_cost": 10.781950004729062,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [2] from route 1 to route 1 at pos 7",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 5,
+          "shake_counter": null
+        },
+        {
+          "iter": 15,
+          "current_cost": 10.781950004729062,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [6] from route 0 to route 0 at pos 2",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 6,
+          "shake_counter": null
+        },
+        {
+          "iter": 16,
+          "current_cost": 10.750148763444894,
+          "best_cost": 10.725923870860731,
+          "move": "2-opt reverse segment [3:6] in route 1",
+          "tabu_size": 16,
+          "tabu_tenure": 5,
+          "non_imp": 7,
+          "shake_counter": null
+        },
+        {
+          "iter": 17,
+          "current_cost": 10.775399351656066,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [9, 7] from route 1 to route 1 at pos 7",
+          "tabu_size": 16,
+          "tabu_tenure": 5,
+          "non_imp": 8,
+          "shake_counter": null
+        },
+        {
+          "iter": 18,
+          "current_cost": 10.762059411233944,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [9] from route 1 to route 1 at pos 7",
+          "tabu_size": 16,
+          "tabu_tenure": 5,
+          "non_imp": 9,
+          "shake_counter": null
+        },
+        {
+          "iter": 19,
+          "current_cost": 10.790104365904009,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [4] from route 1 to route 1 at pos 5",
+          "tabu_size": 16,
+          "tabu_tenure": 5,
+          "non_imp": 10,
+          "shake_counter": null
+        },
+        {
+          "iter": 20,
+          "current_cost": 10.725923870860731,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [7, 9] from route 1 to route 1 at pos 0",
+          "tabu_size": 16,
+          "tabu_tenure": 5,
+          "non_imp": 11,
+          "shake_counter": null
+        },
+        {
+          "iter": 21,
+          "current_cost": 10.725923870860731,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [8] from route 0 to route 0 at pos 2",
+          "tabu_size": 15,
+          "tabu_tenure": 5,
+          "non_imp": 12,
+          "shake_counter": null
+        },
+        {
+          "iter": 22,
+          "current_cost": 10.76203700446814,
+          "best_cost": 10.725923870860731,
+          "move": "2-opt reverse segment [2:6] in route 1",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 13,
+          "shake_counter": null
+        },
+        {
+          "iter": 23,
+          "current_cost": 10.750148763444894,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [7] from route 1 to route 1 at pos 2",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 14,
+          "shake_counter": null
+        },
+        {
+          "iter": 24,
+          "current_cost": 10.77785472190617,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [9, 7] from route 1 to route 1 at pos 7",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 15,
+          "shake_counter": null
+        },
+        {
+          "iter": 25,
+          "current_cost": 10.80431309173803,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [4] from route 1 to route 1 at pos 0",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 16,
+          "shake_counter": null
+        },
+        {
+          "iter": 26,
+          "current_cost": 10.80431309173803,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [6] from route 0 to route 0 at pos 2",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 17,
+          "shake_counter": null
+        },
+        {
+          "iter": 27,
+          "current_cost": 10.775399351656066,
+          "best_cost": 10.725923870860731,
+          "move": "2-opt reverse segment [1:5] in route 1",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 18,
+          "shake_counter": null
+        },
+        {
+          "iter": 28,
+          "current_cost": 10.762059411233944,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [9] from route 1 to route 1 at pos 7",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 19,
+          "shake_counter": null
+        },
+        {
+          "iter": 29,
+          "current_cost": 12.644061210675359,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [7, 9] from route 1 to route 1 at pos 0",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 0,
+          "shake_counter": null
+        },
+        {
+          "iter": 30,
+          "current_cost": 10.725923870860731,
+          "best_cost": 10.725923870860731,
+          "move": "relocate customer 4 from route 0 to route 1",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 1,
+          "shake_counter": null
+        },
+        {
+          "iter": 31,
+          "current_cost": 10.725923870860731,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [8] from route 0 to route 0 at pos 2",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 2,
+          "shake_counter": null
+        },
+        {
+          "iter": 32,
+          "current_cost": 10.76203700446814,
+          "best_cost": 10.725923870860731,
+          "move": "2-opt reverse segment [2:6] in route 1",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 3,
+          "shake_counter": null
+        },
+        {
+          "iter": 33,
+          "current_cost": 10.750148763444894,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [7] from route 1 to route 1 at pos 2",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 4,
+          "shake_counter": null
+        },
+        {
+          "iter": 34,
+          "current_cost": 10.77785472190617,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [9, 7] from route 1 to route 1 at pos 7",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 5,
+          "shake_counter": null
+        },
+        {
+          "iter": 35,
+          "current_cost": 10.80431309173803,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [4] from route 1 to route 1 at pos 0",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 6,
+          "shake_counter": null
+        },
+        {
+          "iter": 36,
+          "current_cost": 10.80431309173803,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [6] from route 0 to route 0 at pos 2",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 7,
+          "shake_counter": null
+        },
+        {
+          "iter": 37,
+          "current_cost": 10.775399351656066,
+          "best_cost": 10.725923870860731,
+          "move": "2-opt reverse segment [1:5] in route 1",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 8,
+          "shake_counter": null
+        },
+        {
+          "iter": 38,
+          "current_cost": 10.762059411233944,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [9] from route 1 to route 1 at pos 7",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 9,
+          "shake_counter": null
+        },
+        {
+          "iter": 39,
+          "current_cost": 10.76203700446814,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [7, 9] from route 1 to route 1 at pos 0",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 10,
+          "shake_counter": null
+        },
+        {
+          "iter": 40,
+          "current_cost": 10.725923870860731,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [4] from route 1 to route 1 at pos 7",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 11,
+          "shake_counter": null
+        },
+        {
+          "iter": 41,
+          "current_cost": 10.725923870860731,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [8] from route 0 to route 0 at pos 2",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 12,
+          "shake_counter": null
+        },
+        {
+          "iter": 42,
+          "current_cost": 10.76203700446814,
+          "best_cost": 10.725923870860731,
+          "move": "2-opt reverse segment [2:6] in route 1",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 13,
+          "shake_counter": null
+        },
+        {
+          "iter": 43,
+          "current_cost": 10.750148763444894,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [7] from route 1 to route 1 at pos 2",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 14,
+          "shake_counter": null
+        },
+        {
+          "iter": 44,
+          "current_cost": 10.77785472190617,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [9, 7] from route 1 to route 1 at pos 7",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 15,
+          "shake_counter": null
+        },
+        {
+          "iter": 45,
+          "current_cost": 10.80431309173803,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [4] from route 1 to route 1 at pos 0",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 16,
+          "shake_counter": null
+        },
+        {
+          "iter": 46,
+          "current_cost": 10.80431309173803,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [6] from route 0 to route 0 at pos 2",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 17,
+          "shake_counter": null
+        },
+        {
+          "iter": 47,
+          "current_cost": 10.775399351656066,
+          "best_cost": 10.725923870860731,
+          "move": "2-opt reverse segment [1:5] in route 1",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 18,
+          "shake_counter": null
+        },
+        {
+          "iter": 48,
+          "current_cost": 10.762059411233944,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [9] from route 1 to route 1 at pos 7",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 19,
+          "shake_counter": null
+        },
+        {
+          "iter": 49,
+          "current_cost": 15.442146232694498,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [7, 9] from route 1 to route 1 at pos 0",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 0,
+          "shake_counter": null
+        },
+        {
+          "iter": 50,
+          "current_cost": 10.76203700446814,
+          "best_cost": 10.725923870860731,
+          "move": "relocate customer 2 from route 2 to route 1",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 1,
+          "shake_counter": null
+        },
+        {
+          "iter": 51,
+          "current_cost": 10.725923870860731,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [4] from route 1 to route 1 at pos 7",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 2,
+          "shake_counter": null
+        },
+        {
+          "iter": 52,
+          "current_cost": 10.725923870860731,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [8] from route 0 to route 0 at pos 2",
+          "tabu_size": 15,
+          "tabu_tenure": 5,
+          "non_imp": 3,
+          "shake_counter": null
+        },
+        {
+          "iter": 53,
+          "current_cost": 10.76203700446814,
+          "best_cost": 10.725923870860731,
+          "move": "2-opt reverse segment [2:6] in route 1",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 4,
+          "shake_counter": null
+        },
+        {
+          "iter": 54,
+          "current_cost": 10.750148763444894,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [7] from route 1 to route 1 at pos 2",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 5,
+          "shake_counter": null
+        },
+        {
+          "iter": 55,
+          "current_cost": 10.77785472190617,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [9, 7] from route 1 to route 1 at pos 7",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 6,
+          "shake_counter": null
+        },
+        {
+          "iter": 56,
+          "current_cost": 10.80431309173803,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [4] from route 1 to route 1 at pos 0",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 7,
+          "shake_counter": null
+        },
+        {
+          "iter": 57,
+          "current_cost": 10.80431309173803,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [6] from route 0 to route 0 at pos 2",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 8,
+          "shake_counter": null
+        },
+        {
+          "iter": 58,
+          "current_cost": 10.775399351656066,
+          "best_cost": 10.725923870860731,
+          "move": "2-opt reverse segment [1:5] in route 1",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 9,
+          "shake_counter": null
+        },
+        {
+          "iter": 59,
+          "current_cost": 10.762059411233944,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [9] from route 1 to route 1 at pos 7",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 10,
+          "shake_counter": null
+        },
+        {
+          "iter": 60,
+          "current_cost": 10.76203700446814,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [7, 9] from route 1 to route 1 at pos 0",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 11,
+          "shake_counter": null
+        },
+        {
+          "iter": 61,
+          "current_cost": 10.725923870860731,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [4] from route 1 to route 1 at pos 7",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 12,
+          "shake_counter": null
+        },
+        {
+          "iter": 62,
+          "current_cost": 10.725923870860731,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [8] from route 0 to route 0 at pos 2",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 13,
+          "shake_counter": null
+        },
+        {
+          "iter": 63,
+          "current_cost": 10.76203700446814,
+          "best_cost": 10.725923870860731,
+          "move": "2-opt reverse segment [2:6] in route 1",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 14,
+          "shake_counter": null
+        },
+        {
+          "iter": 64,
+          "current_cost": 10.750148763444894,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [7] from route 1 to route 1 at pos 2",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 15,
+          "shake_counter": null
+        },
+        {
+          "iter": 65,
+          "current_cost": 10.77785472190617,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [9, 7] from route 1 to route 1 at pos 7",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 16,
+          "shake_counter": null
+        },
+        {
+          "iter": 66,
+          "current_cost": 10.80431309173803,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [4] from route 1 to route 1 at pos 0",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 17,
+          "shake_counter": null
+        },
+        {
+          "iter": 67,
+          "current_cost": 10.80431309173803,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [6] from route 0 to route 0 at pos 2",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 18,
+          "shake_counter": null
+        },
+        {
+          "iter": 68,
+          "current_cost": 10.775399351656066,
+          "best_cost": 10.725923870860731,
+          "move": "2-opt reverse segment [1:5] in route 1",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 19,
+          "shake_counter": null
+        },
+        {
+          "iter": 69,
+          "current_cost": 14.459024530799391,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [9] from route 1 to route 1 at pos 7",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 0,
+          "shake_counter": null
+        },
+        {
+          "iter": 70,
+          "current_cost": 10.762059411233944,
+          "best_cost": 10.725923870860731,
+          "move": "relocate customer 4 from route 0 to route 1",
+          "tabu_size": 16,
+          "tabu_tenure": 5,
+          "non_imp": 1,
+          "shake_counter": null
+        },
+        {
+          "iter": 71,
+          "current_cost": 10.76203700446814,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [7, 9] from route 1 to route 1 at pos 0",
+          "tabu_size": 16,
+          "tabu_tenure": 5,
+          "non_imp": 2,
+          "shake_counter": null
+        },
+        {
+          "iter": 72,
+          "current_cost": 10.725923870860731,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [4] from route 1 to route 1 at pos 7",
+          "tabu_size": 16,
+          "tabu_tenure": 5,
+          "non_imp": 3,
+          "shake_counter": null
+        },
+        {
+          "iter": 73,
+          "current_cost": 10.725923870860731,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [8] from route 0 to route 0 at pos 2",
+          "tabu_size": 14,
+          "tabu_tenure": 5,
+          "non_imp": 4,
+          "shake_counter": null
+        },
+        {
+          "iter": 74,
+          "current_cost": 10.76203700446814,
+          "best_cost": 10.725923870860731,
+          "move": "2-opt reverse segment [2:6] in route 1",
+          "tabu_size": 16,
+          "tabu_tenure": 5,
+          "non_imp": 5,
+          "shake_counter": null
+        },
+        {
+          "iter": 75,
+          "current_cost": 10.750148763444894,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [7] from route 1 to route 1 at pos 2",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 6,
+          "shake_counter": null
+        },
+        {
+          "iter": 76,
+          "current_cost": 10.77785472190617,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [9, 7] from route 1 to route 1 at pos 7",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 7,
+          "shake_counter": null
+        },
+        {
+          "iter": 77,
+          "current_cost": 10.80431309173803,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [4] from route 1 to route 1 at pos 0",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 8,
+          "shake_counter": null
+        },
+        {
+          "iter": 78,
+          "current_cost": 10.80431309173803,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [6] from route 0 to route 0 at pos 2",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 9,
+          "shake_counter": null
+        },
+        {
+          "iter": 79,
+          "current_cost": 10.775399351656066,
+          "best_cost": 10.725923870860731,
+          "move": "2-opt reverse segment [1:5] in route 1",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 10,
+          "shake_counter": null
+        },
+        {
+          "iter": 80,
+          "current_cost": 10.762059411233944,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [9] from route 1 to route 1 at pos 7",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 11,
+          "shake_counter": null
+        },
+        {
+          "iter": 81,
+          "current_cost": 10.76203700446814,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [7, 9] from route 1 to route 1 at pos 0",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 12,
+          "shake_counter": null
+        },
+        {
+          "iter": 82,
+          "current_cost": 10.725923870860731,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [4] from route 1 to route 1 at pos 7",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 13,
+          "shake_counter": null
+        },
+        {
+          "iter": 83,
+          "current_cost": 10.725923870860731,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [8] from route 0 to route 0 at pos 2",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 14,
+          "shake_counter": null
+        },
+        {
+          "iter": 84,
+          "current_cost": 10.76203700446814,
+          "best_cost": 10.725923870860731,
+          "move": "2-opt reverse segment [2:6] in route 1",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 15,
+          "shake_counter": null
+        },
+        {
+          "iter": 85,
+          "current_cost": 10.750148763444894,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [7] from route 1 to route 1 at pos 2",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 16,
+          "shake_counter": null
+        },
+        {
+          "iter": 86,
+          "current_cost": 10.77785472190617,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [9, 7] from route 1 to route 1 at pos 7",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 17,
+          "shake_counter": null
+        },
+        {
+          "iter": 87,
+          "current_cost": 10.80431309173803,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [4] from route 1 to route 1 at pos 0",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 18,
+          "shake_counter": null
+        },
+        {
+          "iter": 88,
+          "current_cost": 10.80431309173803,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [6] from route 0 to route 0 at pos 2",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 19,
+          "shake_counter": null
+        },
+        {
+          "iter": 89,
+          "current_cost": 14.578678595816214,
+          "best_cost": 10.725923870860731,
+          "move": "2-opt reverse segment [1:5] in route 1",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 0,
+          "shake_counter": null
+        },
+        {
+          "iter": 90,
+          "current_cost": 10.775399351656066,
+          "best_cost": 10.725923870860731,
+          "move": "relocate customer 5 from route 0 to route 1",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 1,
+          "shake_counter": null
+        },
+        {
+          "iter": 91,
+          "current_cost": 10.750148763444894,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [9, 7] from route 1 to route 1 at pos 0",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 2,
+          "shake_counter": null
+        },
+        {
+          "iter": 92,
+          "current_cost": 10.76203700446814,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [9] from route 1 to route 1 at pos 2",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 3,
+          "shake_counter": null
+        },
+        {
+          "iter": 93,
+          "current_cost": 10.725923870860731,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [4] from route 1 to route 1 at pos 7",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 4,
+          "shake_counter": null
+        },
+        {
+          "iter": 94,
+          "current_cost": 10.725923870860731,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [8] from route 0 to route 0 at pos 2",
+          "tabu_size": 15,
+          "tabu_tenure": 5,
+          "non_imp": 5,
+          "shake_counter": null
+        },
+        {
+          "iter": 95,
+          "current_cost": 10.76203700446814,
+          "best_cost": 10.725923870860731,
+          "move": "2-opt reverse segment [2:6] in route 1",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 6,
+          "shake_counter": null
+        },
+        {
+          "iter": 96,
+          "current_cost": 10.764514781484044,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [7, 9] from route 1 to route 1 at pos 7",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 7,
+          "shake_counter": null
+        },
+        {
+          "iter": 97,
+          "current_cost": 10.77785472190617,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [7] from route 1 to route 1 at pos 7",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 8,
+          "shake_counter": null
+        },
+        {
+          "iter": 98,
+          "current_cost": 10.80431309173803,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [4] from route 1 to route 1 at pos 0",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 9,
+          "shake_counter": null
+        },
+        {
+          "iter": 99,
+          "current_cost": 10.779062503526857,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [9, 7] from route 1 to route 1 at pos 0",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 10,
+          "shake_counter": null
+        }
+      ],
+      "shake_events": [
+        {
+          "iteration": 29,
+          "before_routes": [
+            [
+              8,
+              6
+            ],
+            [
+              7,
+              9,
+              4,
+              3,
+              5,
+              1,
+              2
+            ],
+            [
+              10
+            ],
+            []
+          ],
+          "after_routes": [
+            [
+              8,
+              4,
+              6
+            ],
+            [
+              7,
+              9,
+              3,
+              5,
+              1,
+              2
+            ],
+            [
+              10
+            ],
+            []
+          ],
+          "shaken_cost": 12.644061210675359,
+          "feasible": true,
+          "changed": true
+        },
+        {
+          "iteration": 49,
+          "before_routes": [
+            [
+              8,
+              6
+            ],
+            [
+              7,
+              9,
+              4,
+              3,
+              5,
+              1,
+              2
+            ],
+            [
+              10
+            ],
+            []
+          ],
+          "after_routes": [
+            [
+              8,
+              6
+            ],
+            [
+              7,
+              9,
+              4,
+              3,
+              5,
+              1
+            ],
+            [
+              2,
+              10
+            ],
+            []
+          ],
+          "shaken_cost": 15.442146232694498,
+          "feasible": true,
+          "changed": true
+        },
+        {
+          "iteration": 69,
+          "before_routes": [
+            [
+              8,
+              6
+            ],
+            [
+              4,
+              3,
+              5,
+              1,
+              2,
+              7,
+              9
+            ],
+            [
+              10
+            ],
+            []
+          ],
+          "after_routes": [
+            [
+              4,
+              8,
+              6
+            ],
+            [
+              3,
+              5,
+              1,
+              2,
+              7,
+              9
+            ],
+            [
+              10
+            ],
+            []
+          ],
+          "shaken_cost": 14.459024530799391,
+          "feasible": true,
+          "changed": true
+        },
+        {
+          "iteration": 89,
+          "before_routes": [
+            [
+              8,
+              6
+            ],
+            [
+              4,
+              3,
+              5,
+              1,
+              2,
+              9,
+              7
+            ],
+            [
+              10
+            ],
+            []
+          ],
+          "after_routes": [
+            [
+              5,
+              8,
+              6
+            ],
+            [
+              4,
+              3,
+              1,
+              2,
+              9,
+              7
+            ],
+            [
+              10
+            ],
+            []
+          ],
+          "shaken_cost": 14.578678595816214,
+          "feasible": true,
+          "changed": true
+        }
+      ],
+      "start_seed": 3713153068
+    },
+    {
+      "start_index": 4,
+      "best_cost": 10.725923870860731,
+      "vehicles": 3,
+      "routes": [
+        [
+          8,
+          6
+        ],
+        [
+          7,
+          9,
+          3,
+          5,
+          1,
+          2,
+          4
+        ],
+        [
+          10
+        ]
+      ],
+      "stats": {
+        "moves_generated": 26007,
+        "moves_evaluated": 16794,
+        "moves_skipped_validity": 9213,
+        "moves_skipped_tabu": 5321,
+        "moves_before_deduplication": 40654,
+        "moves_before_sampling": 26007,
+        "moves_duplicates_removed": 14647,
+        "shakes": 4,
+        "shakes_successful": 4,
+        "shake_steps_accepted": 4,
+        "shake_candidates_evaluated": 6,
+        "shake_candidates_skipped_validity": 4,
+        "frvcp_construction_calls": 659,
+        "frvcp_construction_time_sec": 0.14466608664952219,
+        "frvcp_search_calls": 13244,
+        "frvcp_search_time_sec": 3.5821269983425736,
+        "frvcp_calls": 13903,
+        "frvcp_total_time_sec": 3.726793084992096,
+        "iterations_total": 100,
+        "starts_completed": 1,
+        "best_start_iterations": 100,
+        "accepted_iterations": 100
+      },
+      "history": [
+        {
+          "iter": 0,
+          "current_cost": 11.898313045057845,
+          "best_cost": 11.898313045057845,
+          "move": "exchange customer 7 (route 0) with 3 (route 1)",
+          "tabu_size": 4,
+          "tabu_tenure": 5,
+          "non_imp": 0,
+          "shake_counter": null
+        },
+        {
+          "iter": 1,
+          "current_cost": 11.802184275575284,
+          "best_cost": 11.802184275575284,
+          "move": "relocate customer 10 from route 1 to route 2",
+          "tabu_size": 5,
+          "tabu_tenure": 5,
+          "non_imp": 0,
+          "shake_counter": null
+        },
+        {
+          "iter": 2,
+          "current_cost": 11.706934713868035,
+          "best_cost": 11.706934713868035,
+          "move": "or-opt move [3] from route 0 to route 0 at pos 5",
+          "tabu_size": 8,
+          "tabu_tenure": 5,
+          "non_imp": 0,
+          "shake_counter": null
+        },
+        {
+          "iter": 3,
+          "current_cost": 11.699658734331654,
+          "best_cost": 11.699658734331654,
+          "move": "2-opt reverse segment [0:7] in route 0",
+          "tabu_size": 16,
+          "tabu_tenure": 5,
+          "non_imp": 0,
+          "shake_counter": null
+        },
+        {
+          "iter": 4,
+          "current_cost": 11.724795967611984,
+          "best_cost": 11.699658734331654,
+          "move": "or-opt move [4] from route 0 to route 0 at pos 6",
+          "tabu_size": 19,
+          "tabu_tenure": 5,
+          "non_imp": 1,
+          "shake_counter": null
+        },
+        {
+          "iter": 5,
+          "current_cost": 11.742470853178387,
+          "best_cost": 11.699658734331654,
+          "move": "or-opt move [2] from route 0 to route 0 at pos 1",
+          "tabu_size": 18,
+          "tabu_tenure": 5,
+          "non_imp": 2,
+          "shake_counter": null
+        },
+        {
+          "iter": 6,
+          "current_cost": 11.803290534038533,
+          "best_cost": 11.699658734331654,
+          "move": "or-opt move [5] from route 0 to route 0 at pos 1",
+          "tabu_size": 20,
+          "tabu_tenure": 5,
+          "non_imp": 3,
+          "shake_counter": null
+        },
+        {
+          "iter": 7,
+          "current_cost": 11.829951035576519,
+          "best_cost": 11.699658734331654,
+          "move": "2-opt reverse segment [1:5] in route 0",
+          "tabu_size": 22,
+          "tabu_tenure": 5,
+          "non_imp": 4,
+          "shake_counter": null
+        },
+        {
+          "iter": 8,
+          "current_cost": 11.832432534424408,
+          "best_cost": 11.699658734331654,
+          "move": "swap customers 6 and 8 in route 0",
+          "tabu_size": 18,
+          "tabu_tenure": 5,
+          "non_imp": 5,
+          "shake_counter": null
+        },
+        {
+          "iter": 9,
+          "current_cost": 11.802184275575284,
+          "best_cost": 11.699658734331654,
+          "move": "or-opt move [1] from route 0 to route 0 at pos 4",
+          "tabu_size": 18,
+          "tabu_tenure": 5,
+          "non_imp": 6,
+          "shake_counter": null
+        },
+        {
+          "iter": 10,
+          "current_cost": 11.706934713868035,
+          "best_cost": 11.699658734331654,
+          "move": "or-opt move [3] from route 0 to route 0 at pos 5",
+          "tabu_size": 18,
+          "tabu_tenure": 5,
+          "non_imp": 7,
+          "shake_counter": null
+        },
+        {
+          "iter": 11,
+          "current_cost": 11.706934713868035,
+          "best_cost": 11.699658734331654,
+          "move": "2-opt reverse segment [1:6] in route 0",
+          "tabu_size": 21,
+          "tabu_tenure": 5,
+          "non_imp": 8,
+          "shake_counter": null
+        },
+        {
+          "iter": 12,
+          "current_cost": 11.762009007391002,
+          "best_cost": 11.699658734331654,
+          "move": "or-opt move [2] from route 0 to route 0 at pos 2",
+          "tabu_size": 19,
+          "tabu_tenure": 5,
+          "non_imp": 9,
+          "shake_counter": null
+        },
+        {
+          "iter": 13,
+          "current_cost": 11.754733027854622,
+          "best_cost": 11.699658734331654,
+          "move": "swap customers 8 and 6 in route 0",
+          "tabu_size": 19,
+          "tabu_tenure": 5,
+          "non_imp": 10,
+          "shake_counter": null
+        },
+        {
+          "iter": 14,
+          "current_cost": 11.735547681023943,
+          "best_cost": 11.699658734331654,
+          "move": "swap customers 2 and 1 in route 0",
+          "tabu_size": 20,
+          "tabu_tenure": 5,
+          "non_imp": 11,
+          "shake_counter": null
+        },
+        {
+          "iter": 15,
+          "current_cost": 11.763615213951235,
+          "best_cost": 11.699658734331654,
+          "move": "or-opt move [4] from route 0 to route 0 at pos 6",
+          "tabu_size": 20,
+          "tabu_tenure": 5,
+          "non_imp": 12,
+          "shake_counter": null
+        },
+        {
+          "iter": 16,
+          "current_cost": 11.7156880365846,
+          "best_cost": 11.699658734331654,
+          "move": "or-opt move [2] from route 0 to route 0 at pos 1",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 13,
+          "shake_counter": null
+        },
+        {
+          "iter": 17,
+          "current_cost": 11.710669611894216,
+          "best_cost": 11.699658734331654,
+          "move": "or-opt move [3] from route 0 to route 0 at pos 5",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 14,
+          "shake_counter": null
+        },
+        {
+          "iter": 18,
+          "current_cost": 11.706934713868035,
+          "best_cost": 11.699658734331654,
+          "move": "swap customers 6 and 8 in route 0",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 15,
+          "shake_counter": null
+        },
+        {
+          "iter": 19,
+          "current_cost": 11.73584845395,
+          "best_cost": 11.699658734331654,
+          "move": "or-opt move [4] from route 0 to route 0 at pos 1",
+          "tabu_size": 16,
+          "tabu_tenure": 5,
+          "non_imp": 16,
+          "shake_counter": null
+        },
+        {
+          "iter": 20,
+          "current_cost": 11.738735955152203,
+          "best_cost": 11.699658734331654,
+          "move": "or-opt move [2] from route 0 to route 0 at pos 6",
+          "tabu_size": 16,
+          "tabu_tenure": 5,
+          "non_imp": 17,
+          "shake_counter": null
+        },
+        {
+          "iter": 21,
+          "current_cost": 11.71195313855842,
+          "best_cost": 11.699658734331654,
+          "move": "or-opt move [1] from route 0 to route 0 at pos 5",
+          "tabu_size": 16,
+          "tabu_tenure": 5,
+          "non_imp": 18,
+          "shake_counter": null
+        },
+        {
+          "iter": 22,
+          "current_cost": 11.706934713868035,
+          "best_cost": 11.699658734331654,
+          "move": "or-opt move [5] from route 0 to route 0 at pos 4",
+          "tabu_size": 16,
+          "tabu_tenure": 5,
+          "non_imp": 19,
+          "shake_counter": null
+        },
+        {
+          "iter": 23,
+          "current_cost": 12.834117388570975,
+          "best_cost": 11.699658734331654,
+          "move": "swap customers 8 and 6 in route 0",
+          "tabu_size": 16,
+          "tabu_tenure": 5,
+          "non_imp": 0,
+          "shake_counter": null
+        },
+        {
+          "iter": 24,
+          "current_cost": 11.699658734331654,
+          "best_cost": 11.699658734331654,
+          "move": "exchange customer 7 (route 0) with 2 (route 1)",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 1,
+          "shake_counter": null
+        },
+        {
+          "iter": 25,
+          "current_cost": 11.724795967611984,
+          "best_cost": 11.699658734331654,
+          "move": "or-opt move [4] from route 0 to route 0 at pos 6",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 2,
+          "shake_counter": null
+        },
+        {
+          "iter": 26,
+          "current_cost": 11.742470853178387,
+          "best_cost": 11.699658734331654,
+          "move": "or-opt move [2] from route 0 to route 0 at pos 1",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 3,
+          "shake_counter": null
+        },
+        {
+          "iter": 27,
+          "current_cost": 11.710669611894216,
+          "best_cost": 11.699658734331654,
+          "move": "2-opt reverse segment [2:5] in route 0",
+          "tabu_size": 18,
+          "tabu_tenure": 5,
+          "non_imp": 4,
+          "shake_counter": null
+        },
+        {
+          "iter": 28,
+          "current_cost": 11.706934713868035,
+          "best_cost": 11.699658734331654,
+          "move": "swap customers 6 and 8 in route 0",
+          "tabu_size": 18,
+          "tabu_tenure": 5,
+          "non_imp": 5,
+          "shake_counter": null
+        },
+        {
+          "iter": 29,
+          "current_cost": 11.73584845395,
+          "best_cost": 11.699658734331654,
+          "move": "or-opt move [4] from route 0 to route 0 at pos 1",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 6,
+          "shake_counter": null
+        },
+        {
+          "iter": 30,
+          "current_cost": 11.738735955152203,
+          "best_cost": 11.699658734331654,
+          "move": "or-opt move [2] from route 0 to route 0 at pos 6",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 7,
+          "shake_counter": null
+        },
+        {
+          "iter": 31,
+          "current_cost": 11.71195313855842,
+          "best_cost": 11.699658734331654,
+          "move": "or-opt move [1] from route 0 to route 0 at pos 5",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 8,
+          "shake_counter": null
+        },
+        {
+          "iter": 32,
+          "current_cost": 11.706934713868035,
+          "best_cost": 11.699658734331654,
+          "move": "or-opt move [5] from route 0 to route 0 at pos 4",
+          "tabu_size": 16,
+          "tabu_tenure": 5,
+          "non_imp": 9,
+          "shake_counter": null
+        },
+        {
+          "iter": 33,
+          "current_cost": 11.699658734331654,
+          "best_cost": 11.699658734331654,
+          "move": "swap customers 8 and 6 in route 0",
+          "tabu_size": 16,
+          "tabu_tenure": 5,
+          "non_imp": 10,
+          "shake_counter": null
+        },
+        {
+          "iter": 34,
+          "current_cost": 11.724795967611984,
+          "best_cost": 11.699658734331654,
+          "move": "or-opt move [4] from route 0 to route 0 at pos 6",
+          "tabu_size": 16,
+          "tabu_tenure": 5,
+          "non_imp": 11,
+          "shake_counter": null
+        },
+        {
+          "iter": 35,
+          "current_cost": 11.742470853178387,
+          "best_cost": 11.699658734331654,
+          "move": "or-opt move [2] from route 0 to route 0 at pos 1",
+          "tabu_size": 16,
+          "tabu_tenure": 5,
+          "non_imp": 12,
+          "shake_counter": null
+        },
+        {
+          "iter": 36,
+          "current_cost": 11.7156880365846,
+          "best_cost": 11.699658734331654,
+          "move": "or-opt move [1] from route 0 to route 0 at pos 2",
+          "tabu_size": 16,
+          "tabu_tenure": 5,
+          "non_imp": 13,
+          "shake_counter": null
+        },
+        {
+          "iter": 37,
+          "current_cost": 11.710669611894216,
+          "best_cost": 11.699658734331654,
+          "move": "or-opt move [3] from route 0 to route 0 at pos 5",
+          "tabu_size": 16,
+          "tabu_tenure": 5,
+          "non_imp": 14,
+          "shake_counter": null
+        },
+        {
+          "iter": 38,
+          "current_cost": 11.706934713868035,
+          "best_cost": 11.699658734331654,
+          "move": "swap customers 6 and 8 in route 0",
+          "tabu_size": 16,
+          "tabu_tenure": 5,
+          "non_imp": 15,
+          "shake_counter": null
+        },
+        {
+          "iter": 39,
+          "current_cost": 11.73584845395,
+          "best_cost": 11.699658734331654,
+          "move": "or-opt move [4] from route 0 to route 0 at pos 1",
+          "tabu_size": 16,
+          "tabu_tenure": 5,
+          "non_imp": 16,
+          "shake_counter": null
+        },
+        {
+          "iter": 40,
+          "current_cost": 11.738735955152203,
+          "best_cost": 11.699658734331654,
+          "move": "or-opt move [2] from route 0 to route 0 at pos 6",
+          "tabu_size": 16,
+          "tabu_tenure": 5,
+          "non_imp": 17,
+          "shake_counter": null
+        },
+        {
+          "iter": 41,
+          "current_cost": 11.71195313855842,
+          "best_cost": 11.699658734331654,
+          "move": "or-opt move [1] from route 0 to route 0 at pos 5",
+          "tabu_size": 16,
+          "tabu_tenure": 5,
+          "non_imp": 18,
+          "shake_counter": null
+        },
+        {
+          "iter": 42,
+          "current_cost": 11.706934713868035,
+          "best_cost": 11.699658734331654,
+          "move": "or-opt move [5] from route 0 to route 0 at pos 4",
+          "tabu_size": 16,
+          "tabu_tenure": 5,
+          "non_imp": 19,
+          "shake_counter": null
+        },
+        {
+          "iter": 43,
+          "current_cost": 16.313549859411882,
+          "best_cost": 11.699658734331654,
+          "move": "swap customers 8 and 6 in route 0",
+          "tabu_size": 16,
+          "tabu_tenure": 5,
+          "non_imp": 0,
+          "shake_counter": null
+        },
+        {
+          "iter": 44,
+          "current_cost": 11.699658734331654,
+          "best_cost": 11.699658734331654,
+          "move": "cross suffix at 4 (route 0) with suffix at 1 (route 2)",
+          "tabu_size": 15,
+          "tabu_tenure": 5,
+          "non_imp": 1,
+          "shake_counter": null
+        },
+        {
+          "iter": 45,
+          "current_cost": 11.724795967611984,
+          "best_cost": 11.699658734331654,
+          "move": "or-opt move [4] from route 0 to route 0 at pos 6",
+          "tabu_size": 15,
+          "tabu_tenure": 5,
+          "non_imp": 2,
+          "shake_counter": null
+        },
+        {
+          "iter": 46,
+          "current_cost": 11.742470853178387,
+          "best_cost": 11.699658734331654,
+          "move": "or-opt move [2] from route 0 to route 0 at pos 1",
+          "tabu_size": 15,
+          "tabu_tenure": 5,
+          "non_imp": 3,
+          "shake_counter": null
+        },
+        {
+          "iter": 47,
+          "current_cost": 11.710669611894216,
+          "best_cost": 11.699658734331654,
+          "move": "2-opt reverse segment [2:5] in route 0",
+          "tabu_size": 16,
+          "tabu_tenure": 5,
+          "non_imp": 4,
+          "shake_counter": null
+        },
+        {
+          "iter": 48,
+          "current_cost": 11.706934713868035,
+          "best_cost": 11.699658734331654,
+          "move": "swap customers 6 and 8 in route 0",
+          "tabu_size": 16,
+          "tabu_tenure": 5,
+          "non_imp": 5,
+          "shake_counter": null
+        },
+        {
+          "iter": 49,
+          "current_cost": 11.73584845395,
+          "best_cost": 11.699658734331654,
+          "move": "or-opt move [4] from route 0 to route 0 at pos 1",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 6,
+          "shake_counter": null
+        },
+        {
+          "iter": 50,
+          "current_cost": 11.738735955152203,
+          "best_cost": 11.699658734331654,
+          "move": "or-opt move [2] from route 0 to route 0 at pos 6",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 7,
+          "shake_counter": null
+        },
+        {
+          "iter": 51,
+          "current_cost": 11.71195313855842,
+          "best_cost": 11.699658734331654,
+          "move": "or-opt move [1] from route 0 to route 0 at pos 5",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 8,
+          "shake_counter": null
+        },
+        {
+          "iter": 52,
+          "current_cost": 11.706934713868035,
+          "best_cost": 11.699658734331654,
+          "move": "or-opt move [5] from route 0 to route 0 at pos 4",
+          "tabu_size": 16,
+          "tabu_tenure": 5,
+          "non_imp": 9,
+          "shake_counter": null
+        },
+        {
+          "iter": 53,
+          "current_cost": 11.699658734331654,
+          "best_cost": 11.699658734331654,
+          "move": "swap customers 8 and 6 in route 0",
+          "tabu_size": 16,
+          "tabu_tenure": 5,
+          "non_imp": 10,
+          "shake_counter": null
+        },
+        {
+          "iter": 54,
+          "current_cost": 11.724795967611984,
+          "best_cost": 11.699658734331654,
+          "move": "or-opt move [4] from route 0 to route 0 at pos 6",
+          "tabu_size": 16,
+          "tabu_tenure": 5,
+          "non_imp": 11,
+          "shake_counter": null
+        },
+        {
+          "iter": 55,
+          "current_cost": 11.742470853178387,
+          "best_cost": 11.699658734331654,
+          "move": "or-opt move [2] from route 0 to route 0 at pos 1",
+          "tabu_size": 16,
+          "tabu_tenure": 5,
+          "non_imp": 12,
+          "shake_counter": null
+        },
+        {
+          "iter": 56,
+          "current_cost": 11.7156880365846,
+          "best_cost": 11.699658734331654,
+          "move": "or-opt move [1] from route 0 to route 0 at pos 2",
+          "tabu_size": 16,
+          "tabu_tenure": 5,
+          "non_imp": 13,
+          "shake_counter": null
+        },
+        {
+          "iter": 57,
+          "current_cost": 11.710669611894216,
+          "best_cost": 11.699658734331654,
+          "move": "or-opt move [3] from route 0 to route 0 at pos 5",
+          "tabu_size": 16,
+          "tabu_tenure": 5,
+          "non_imp": 14,
+          "shake_counter": null
+        },
+        {
+          "iter": 58,
+          "current_cost": 11.706934713868035,
+          "best_cost": 11.699658734331654,
+          "move": "swap customers 6 and 8 in route 0",
+          "tabu_size": 16,
+          "tabu_tenure": 5,
+          "non_imp": 15,
+          "shake_counter": null
+        },
+        {
+          "iter": 59,
+          "current_cost": 11.73584845395,
+          "best_cost": 11.699658734331654,
+          "move": "or-opt move [4] from route 0 to route 0 at pos 1",
+          "tabu_size": 16,
+          "tabu_tenure": 5,
+          "non_imp": 16,
+          "shake_counter": null
+        },
+        {
+          "iter": 60,
+          "current_cost": 11.738735955152203,
+          "best_cost": 11.699658734331654,
+          "move": "or-opt move [2] from route 0 to route 0 at pos 6",
+          "tabu_size": 16,
+          "tabu_tenure": 5,
+          "non_imp": 17,
+          "shake_counter": null
+        },
+        {
+          "iter": 61,
+          "current_cost": 11.71195313855842,
+          "best_cost": 11.699658734331654,
+          "move": "or-opt move [1] from route 0 to route 0 at pos 5",
+          "tabu_size": 16,
+          "tabu_tenure": 5,
+          "non_imp": 18,
+          "shake_counter": null
+        },
+        {
+          "iter": 62,
+          "current_cost": 11.706934713868035,
+          "best_cost": 11.699658734331654,
+          "move": "or-opt move [5] from route 0 to route 0 at pos 4",
+          "tabu_size": 16,
+          "tabu_tenure": 5,
+          "non_imp": 19,
+          "shake_counter": null
+        },
+        {
+          "iter": 63,
+          "current_cost": 11.825565456185076,
+          "best_cost": 11.699658734331654,
+          "move": "swap customers 8 and 6 in route 0",
+          "tabu_size": 16,
+          "tabu_tenure": 5,
+          "non_imp": 0,
+          "shake_counter": null
+        },
+        {
+          "iter": 64,
+          "current_cost": 11.699658734331654,
+          "best_cost": 11.699658734331654,
+          "move": "relocate customer 6 from route 1 to route 0",
+          "tabu_size": 15,
+          "tabu_tenure": 5,
+          "non_imp": 1,
+          "shake_counter": null
+        },
+        {
+          "iter": 65,
+          "current_cost": 11.724795967611984,
+          "best_cost": 11.699658734331654,
+          "move": "or-opt move [4] from route 0 to route 0 at pos 6",
+          "tabu_size": 15,
+          "tabu_tenure": 5,
+          "non_imp": 2,
+          "shake_counter": null
+        },
+        {
+          "iter": 66,
+          "current_cost": 11.742470853178387,
+          "best_cost": 11.699658734331654,
+          "move": "or-opt move [2] from route 0 to route 0 at pos 1",
+          "tabu_size": 15,
+          "tabu_tenure": 5,
+          "non_imp": 3,
+          "shake_counter": null
+        },
+        {
+          "iter": 67,
+          "current_cost": 11.710669611894216,
+          "best_cost": 11.699658734331654,
+          "move": "2-opt reverse segment [2:5] in route 0",
+          "tabu_size": 16,
+          "tabu_tenure": 5,
+          "non_imp": 4,
+          "shake_counter": null
+        },
+        {
+          "iter": 68,
+          "current_cost": 11.771489292754362,
+          "best_cost": 11.699658734331654,
+          "move": "or-opt move [5] from route 0 to route 0 at pos 1",
+          "tabu_size": 16,
+          "tabu_tenure": 5,
+          "non_imp": 5,
+          "shake_counter": null
+        },
+        {
+          "iter": 69,
+          "current_cost": 11.798969615198521,
+          "best_cost": 11.699658734331654,
+          "move": "swap customers 6 and 8 in route 0",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 6,
+          "shake_counter": null
+        },
+        {
+          "iter": 70,
+          "current_cost": 11.806271980983405,
+          "best_cost": 11.699658734331654,
+          "move": "or-opt move [4] from route 0 to route 0 at pos 1",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 7,
+          "shake_counter": null
+        },
+        {
+          "iter": 71,
+          "current_cost": 11.798969615198521,
+          "best_cost": 11.699658734331654,
+          "move": "2-opt reverse segment [2:6] in route 0",
+          "tabu_size": 19,
+          "tabu_tenure": 5,
+          "non_imp": 8,
+          "shake_counter": null
+        },
+        {
+          "iter": 72,
+          "current_cost": 11.706934713868035,
+          "best_cost": 11.699658734331654,
+          "move": "or-opt move [5] from route 0 to route 0 at pos 3",
+          "tabu_size": 18,
+          "tabu_tenure": 5,
+          "non_imp": 9,
+          "shake_counter": null
+        },
+        {
+          "iter": 73,
+          "current_cost": 11.738735955152203,
+          "best_cost": 11.699658734331654,
+          "move": "2-opt reverse segment [2:5] in route 0",
+          "tabu_size": 19,
+          "tabu_tenure": 5,
+          "non_imp": 10,
+          "shake_counter": null
+        },
+        {
+          "iter": 74,
+          "current_cost": 11.731459975615822,
+          "best_cost": 11.699658734331654,
+          "move": "swap customers 8 and 6 in route 0",
+          "tabu_size": 19,
+          "tabu_tenure": 5,
+          "non_imp": 11,
+          "shake_counter": null
+        },
+        {
+          "iter": 75,
+          "current_cost": 11.759527508543114,
+          "best_cost": 11.699658734331654,
+          "move": "or-opt move [4] from route 0 to route 0 at pos 6",
+          "tabu_size": 19,
+          "tabu_tenure": 5,
+          "non_imp": 12,
+          "shake_counter": null
+        },
+        {
+          "iter": 76,
+          "current_cost": 11.710669611894216,
+          "best_cost": 11.699658734331654,
+          "move": "or-opt move [2] from route 0 to route 0 at pos 1",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 13,
+          "shake_counter": null
+        },
+        {
+          "iter": 77,
+          "current_cost": 11.746558558586505,
+          "best_cost": 11.699658734331654,
+          "move": "or-opt move [1] from route 0 to route 0 at pos 5",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 14,
+          "shake_counter": null
+        },
+        {
+          "iter": 78,
+          "current_cost": 11.742470853178387,
+          "best_cost": 11.699658734331654,
+          "move": "or-opt move [5] from route 0 to route 0 at pos 4",
+          "tabu_size": 16,
+          "tabu_tenure": 5,
+          "non_imp": 15,
+          "shake_counter": null
+        },
+        {
+          "iter": 79,
+          "current_cost": 11.738735955152203,
+          "best_cost": 11.699658734331654,
+          "move": "swap customers 6 and 8 in route 0",
+          "tabu_size": 16,
+          "tabu_tenure": 5,
+          "non_imp": 16,
+          "shake_counter": null
+        },
+        {
+          "iter": 80,
+          "current_cost": 11.706934713868035,
+          "best_cost": 11.699658734331654,
+          "move": "swap customers 2 and 4 in route 0",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 17,
+          "shake_counter": null
+        },
+        {
+          "iter": 81,
+          "current_cost": 11.742823660560324,
+          "best_cost": 11.699658734331654,
+          "move": "or-opt move [1] from route 0 to route 0 at pos 2",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 18,
+          "shake_counter": null
+        },
+        {
+          "iter": 82,
+          "current_cost": 11.731527296536916,
+          "best_cost": 11.699658734331654,
+          "move": "or-opt move [2] from route 0 to route 0 at pos 2",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 19,
+          "shake_counter": null
+        },
+        {
+          "iter": 83,
+          "current_cost": 12.786871874973317,
+          "best_cost": 11.699658734331654,
+          "move": "or-opt move [3] from route 0 to route 0 at pos 6",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 0,
+          "shake_counter": null
+        },
+        {
+          "iter": 84,
+          "current_cost": 11.73584845395,
+          "best_cost": 11.699658734331654,
+          "move": "exchange customer 7 (route 0) with 4 (route 1)",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 1,
+          "shake_counter": null
+        },
+        {
+          "iter": 85,
+          "current_cost": 11.706934713868035,
+          "best_cost": 11.699658734331654,
+          "move": "or-opt move [4] from route 0 to route 0 at pos 6",
+          "tabu_size": 16,
+          "tabu_tenure": 5,
+          "non_imp": 2,
+          "shake_counter": null
+        },
+        {
+          "iter": 86,
+          "current_cost": 11.710669611894216,
+          "best_cost": 11.699658734331654,
+          "move": "swap customers 8 and 6 in route 0",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 3,
+          "shake_counter": null
+        },
+        {
+          "iter": 87,
+          "current_cost": 11.731459975615822,
+          "best_cost": 11.699658734331654,
+          "move": "swap customers 2 and 4 in route 0",
+          "tabu_size": 18,
+          "tabu_tenure": 5,
+          "non_imp": 4,
+          "shake_counter": null
+        },
+        {
+          "iter": 88,
+          "current_cost": 11.699658734331654,
+          "best_cost": 11.699658734331654,
+          "move": "2-opt reverse segment [2:5] in route 0",
+          "tabu_size": 19,
+          "tabu_tenure": 5,
+          "non_imp": 5,
+          "shake_counter": null
+        },
+        {
+          "iter": 89,
+          "current_cost": 11.791232356681938,
+          "best_cost": 11.699658734331654,
+          "move": "or-opt move [9] from route 1 to route 1 at pos 2",
+          "tabu_size": 18,
+          "tabu_tenure": 5,
+          "non_imp": 6,
+          "shake_counter": null
+        },
+        {
+          "iter": 90,
+          "current_cost": 11.829724148931701,
+          "best_cost": 11.699658734331654,
+          "move": "relocate customer 10 from route 2 to route 1",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 7,
+          "shake_counter": null
+        },
+        {
+          "iter": 91,
+          "current_cost": 11.782010436417785,
+          "best_cost": 11.699658734331654,
+          "move": "relocate customer 6 from route 0 to route 1",
+          "tabu_size": 16,
+          "tabu_tenure": 5,
+          "non_imp": 8,
+          "shake_counter": null
+        },
+        {
+          "iter": 92,
+          "current_cost": 11.77007407253937,
+          "best_cost": 11.699658734331654,
+          "move": "or-opt move [8] from route 0 to route 0 at pos 0",
+          "tabu_size": 15,
+          "tabu_tenure": 5,
+          "non_imp": 9,
+          "shake_counter": null
+        },
+        {
+          "iter": 93,
+          "current_cost": 10.858165773950706,
+          "best_cost": 10.858165773950706,
+          "move": "cross suffix at 1 (route 0) with suffix at 2 (route 1)",
+          "tabu_size": 13,
+          "tabu_tenure": 5,
+          "non_imp": 0,
+          "shake_counter": null
+        },
+        {
+          "iter": 94,
+          "current_cost": 10.76203700446814,
+          "best_cost": 10.76203700446814,
+          "move": "relocate customer 10 from route 0 to route 2",
+          "tabu_size": 11,
+          "tabu_tenure": 5,
+          "non_imp": 0,
+          "shake_counter": null
+        },
+        {
+          "iter": 95,
+          "current_cost": 10.725923870860731,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [4] from route 1 to route 1 at pos 7",
+          "tabu_size": 12,
+          "tabu_tenure": 5,
+          "non_imp": 0,
+          "shake_counter": null
+        },
+        {
+          "iter": 96,
+          "current_cost": 10.76203700446814,
+          "best_cost": 10.725923870860731,
+          "move": "2-opt reverse segment [2:6] in route 1",
+          "tabu_size": 14,
+          "tabu_tenure": 5,
+          "non_imp": 1,
+          "shake_counter": null
+        },
+        {
+          "iter": 97,
+          "current_cost": 10.750148763444894,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [7] from route 1 to route 1 at pos 2",
+          "tabu_size": 14,
+          "tabu_tenure": 5,
+          "non_imp": 2,
+          "shake_counter": null
+        },
+        {
+          "iter": 98,
+          "current_cost": 10.750148763444894,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [8] from route 0 to route 0 at pos 2",
+          "tabu_size": 15,
+          "tabu_tenure": 5,
+          "non_imp": 3,
+          "shake_counter": null
+        },
+        {
+          "iter": 99,
+          "current_cost": 10.77785472190617,
+          "best_cost": 10.725923870860731,
+          "move": "or-opt move [9, 7] from route 1 to route 1 at pos 7",
+          "tabu_size": 17,
+          "tabu_tenure": 5,
+          "non_imp": 4,
+          "shake_counter": null
+        }
+      ],
+      "shake_events": [
+        {
+          "iteration": 23,
+          "before_routes": [
+            [
+              6,
+              4,
+              3,
+              5,
+              1,
+              2,
+              8
+            ],
+            [
+              9,
+              7
+            ],
+            [
+              10
+            ],
+            []
+          ],
+          "after_routes": [
+            [
+              6,
+              4,
+              3,
+              5,
+              1,
+              7,
+              8
+            ],
+            [
+              9,
+              2
+            ],
+            [
+              10
+            ],
+            []
+          ],
+          "shaken_cost": 12.834117388570975,
+          "feasible": true,
+          "changed": true
+        },
+        {
+          "iteration": 43,
+          "before_routes": [
+            [
+              6,
+              4,
+              3,
+              5,
+              1,
+              2,
+              8
+            ],
+            [
+              9,
+              7
+            ],
+            [
+              10
+            ],
+            []
+          ],
+          "after_routes": [
+            [
+              6,
+              4,
+              3,
+              5
+            ],
+            [
+              9,
+              7
+            ],
+            [
+              10,
+              1,
+              2,
+              8
+            ],
+            []
+          ],
+          "shaken_cost": 16.313549859411882,
+          "feasible": true,
+          "changed": true
+        },
+        {
+          "iteration": 63,
+          "before_routes": [
+            [
+              6,
+              4,
+              3,
+              5,
+              1,
+              2,
+              8
+            ],
+            [
+              9,
+              7
+            ],
+            [
+              10
+            ],
+            []
+          ],
+          "after_routes": [
+            [
+              4,
+              3,
+              5,
+              1,
+              2,
+              8
+            ],
+            [
+              9,
+              7,
+              6
+            ],
+            [
+              10
+            ],
+            []
+          ],
+          "shaken_cost": 11.825565456185076,
+          "feasible": true,
+          "changed": true
+        },
+        {
+          "iteration": 83,
+          "before_routes": [
+            [
+              8,
+              4,
+              2,
+              1,
+              5,
+              3,
+              6
+            ],
+            [
+              9,
+              7
+            ],
+            [
+              10
+            ],
+            []
+          ],
+          "after_routes": [
+            [
+              8,
+              7,
+              2,
+              1,
+              5,
+              3,
+              6
+            ],
+            [
+              9,
+              4
+            ],
+            [
+              10
+            ],
+            []
+          ],
+          "shaken_cost": 12.786871874973317,
+          "feasible": true,
+          "changed": true
+        }
+      ],
+      "start_seed": 611678597
+    }
+  ]
+}
