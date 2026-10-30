@@ -1,8 +1,10 @@
-"""Render manuscript figures using the original plotting style and current data."""
+"""Plot experiment results."""
+
 from pathlib import Path
 import sys
 import argparse
 import matplotlib
+
 matplotlib.use("Agg")
 import numpy as np
 import pandas as pd
@@ -12,8 +14,10 @@ import seaborn as sns
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 from result_statistics import grouped_instance_summary, add_baseline_reductions
+
 RESULTS = ROOT / "results_current"
 OUT_DIR = ROOT / "figures"
+
 
 def save_figure(fig, name: str) -> None:
     for extension in ("png", "pdf"):
@@ -25,14 +29,18 @@ def load_csv(rel_path: str) -> pd.DataFrame:
     return pd.read_csv(RESULTS / rel_path)
 
 
-def add_reduction(df: pd.DataFrame, baseline_cost_map: dict[str, float]) -> pd.DataFrame:
+def add_reduction(
+    df: pd.DataFrame, baseline_cost_map: dict[str, float]
+) -> pd.DataFrame:
     out = df.copy()
     out["best_cost"] = pd.to_numeric(out["best_cost"], errors="coerce")
     out["baseline_cost"] = out["instance"].map(baseline_cost_map)
     if out["baseline_cost"].isna().any():
         missing = out.loc[out["baseline_cost"].isna(), "instance"].unique()
         raise ValueError(f"Missing baseline rows for: {missing}")
-    out["reduction_pct"] = (out["baseline_cost"] - out["best_cost"]) / out["baseline_cost"] * 100.0
+    out["reduction_pct"] = (
+        (out["baseline_cost"] - out["best_cost"]) / out["baseline_cost"] * 100.0
+    )
     out["n_customers"] = pd.to_numeric(out["n_customers"], errors="coerce").astype(int)
     return out
 
@@ -67,7 +75,12 @@ def plot_replication_distribution(multiseed: pd.DataFrame) -> None:
         ax=ax,
     )
     handles, labels = ax.get_legend_handles_labels()
-    ax.legend(handles[: len(size_order)], labels[: len(size_order)], title="n_customers", loc="upper left")
+    ax.legend(
+        handles[: len(size_order)],
+        labels[: len(size_order)],
+        title="n_customers",
+        loc="upper left",
+    )
     ax.set_title("Replication Distribution of Cost Reduction")
     ax.set_xlabel("DWC coverage")
     ax.set_ylabel("Cost reduction vs no-DWC baseline (%)")
@@ -129,7 +142,10 @@ def build_single_placement_diagnostics(
 ) -> pd.DataFrame:
     single = omega_raw[
         (pd.to_numeric(omega_raw["omega"], errors="coerce") == omega_value)
-        & (pd.to_numeric(omega_raw["placement_seed"], errors="coerce") == placement_seed)
+        & (
+            pd.to_numeric(omega_raw["placement_seed"], errors="coerce")
+            == placement_seed
+        )
     ].copy()
     single = add_reduction(single, baseline_cost_map)
     single["baseline_vehicles"] = single["instance"].map(baseline_vehicle_map)
@@ -175,7 +191,9 @@ def plot_vehicle_reduction_coverage(single: pd.DataFrame) -> None:
                 fontweight="bold",
                 fontsize=10,
             )
-        ax.set_ylabel("Runs with fewer vehicles" if size == sizes[0] else "", fontsize=16)
+        ax.set_ylabel(
+            "Runs with fewer vehicles" if size == sizes[0] else "", fontsize=16
+        )
         ax.set_xlabel("DWC coverage")
         ax.set_title(f"{size} Customers")
         ax.set_xticks(range(len(coverages)))
@@ -230,20 +248,20 @@ def plot_heatmap_cost(single: pd.DataFrame) -> None:
     save_figure(fig, "fig4_heatmap_cost")
 
 
-
 def render_main_figures(multiseed, omega, output_dir):
     global OUT_DIR
     OUT_DIR = Path(output_dir)
     OUT_DIR.mkdir(parents=True, exist_ok=True)
-    # Original style, dimensions, colors, labels, legends, markers, and DPI.
     sns.set_theme(style="whitegrid", context="talk")
     np.random.seed(20240528)
     base = omega[["instance", "base_cost", "base_vehicles"]].drop_duplicates()
     if base["instance"].duplicated().any():
         raise ValueError("Inconsistent matched baseline")
     single = build_single_placement_diagnostics(
-        omega, base.set_index("instance")["base_cost"].to_dict(),
-        base.set_index("instance")["base_vehicles"].to_dict())
+        omega,
+        base.set_index("instance")["base_cost"].to_dict(),
+        base.set_index("instance")["base_vehicles"].to_dict(),
+    )
     plot_replication_distribution(multiseed)
     plot_omega_sensitivity(omega)
     plot_vehicle_reduction_coverage(single)
@@ -256,7 +274,12 @@ if __name__ == "__main__":
     parser.add_argument("--output", type=Path, default=OUT_DIR)
     args = parser.parse_args()
     baseline = pd.read_csv(args.results / "no_wireless_baseline/no_wireless_all.csv")
-    multiseed = add_baseline_reductions(pd.read_csv(args.results / "multiseed_replication/multiseed_all.csv"), baseline)
-    omega = add_baseline_reductions(pd.read_csv(args.results / "omega_sensitivity/omega_sensitivity_all.csv"), baseline)
+    multiseed = add_baseline_reductions(
+        pd.read_csv(args.results / "multiseed_replication/multiseed_all.csv"), baseline
+    )
+    omega = add_baseline_reductions(
+        pd.read_csv(args.results / "omega_sensitivity/omega_sensitivity_all.csv"),
+        baseline,
+    )
     render_main_figures(multiseed, omega, args.output)
     print("Updated the four manuscript figures using their original style.")
