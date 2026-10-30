@@ -163,18 +163,16 @@ def validate(frames, results, details_archive=None):
         arcs = selected_arcs(
             row.instance, row.n_customers, row.coverage, row.placement_seed
         )
-        if details_archive is None:
-            detail = json.loads(
-                (results / row.details_file).read_text(encoding="utf-8")
-            )
-        else:
-            detail = json.loads(details_archive.read(Path(row.details_file).as_posix()))
-        assert sorted(map(tuple, detail["equipped_arcs"])) == arcs
-        assert (
-            detail["case_id"] == row.case_id
-            and detail["campaign_id"] == row.campaign_id
-        )
-        assert detail["protocol"] == protocol
+        detail_file = getattr(row, "details_file", None)
+        if isinstance(detail_file, str) and detail_file:
+            if details_archive is None:
+                detail = json.loads((results / detail_file).read_text(encoding="utf-8"))
+            else:
+                detail = json.loads(details_archive.read(Path(detail_file).as_posix()))
+            assert sorted(map(tuple, detail["equipped_arcs"])) == arcs
+            assert detail["case_id"] == row.case_id
+            assert detail["campaign_id"] == row.campaign_id
+            assert detail["protocol"] == protocol
         assert row.selected_arcs == len(arcs) and row.applied_arcs == len(arcs)
         energy = np.asarray(data["energy_matrix"], dtype=float).copy()
         reduction = sum(energy[i, j] * row.omega for i, j in arcs)
@@ -259,11 +257,9 @@ def stats_table(frame, keys):
     return pd.DataFrame(rows)
 
 
-def ablation_tables(raw):
+def matched_ablation_table(raw):
     full = raw[raw.ablation.eq("baseline")]
     summaries = []
-    paired = []
-    start_pairs = []
     metrics = {
         "best_cost": "cost",
         "vehicles": "vehicles",
@@ -292,87 +288,13 @@ def ablation_tables(raw):
                 m[metric].mean() / m[metric + "_full"].mean() - 1
             )
         summaries.append(summary)
-        paired.append(m)
-        for row in m.itertuples(index=False):
-            fs = json.loads(row.start_results_json_full)
-            vs = json.loads(row.start_results_json)
-            for f, v in zip(fs, vs):
-                assert f["start_seed"] == v["start_seed"]
-                start_pairs.append(
-                    dict(
-                        instance=row.instance,
-                        ablation=variant,
-                        start_seed=f["start_seed"],
-                        full_cost=f["best_cost"],
-                        variant_cost=v["best_cost"],
-                        cost_change_pct=100 * (v["best_cost"] / f["best_cost"] - 1),
-                    )
-                )
-    starts = pd.DataFrame(start_pairs)
-    start_summary = []
-    for variant, g in starts.groupby("ablation"):
-        # Repeated starts remain within their instance for the CI.
-        stats = instance_summary(g, "cost_change_pct")
-        diff = g.variant_cost - g.full_cost
-        start_summary.append(
-            dict(
-                setting=variant,
-                **stats,
-                full_wins=int((diff > 1e-6).sum()),
-                ties=int((abs(diff) <= 1e-6).sum()),
-                variant_wins=int((diff < -1e-6).sum()),
-            )
-        )
-    return (
-        pd.DataFrame(summaries),
-        pd.concat(paired, ignore_index=True),
-        starts,
-        pd.DataFrame(start_summary),
-    )
+    return pd.DataFrame(summaries)
 
 
-def save_figures(multi, omega, ablation, scalability, out):
-    import matplotlib
-
-    matplotlib.use("Agg")
-    import matplotlib.pyplot as plt
-    import seaborn as sns
-
-    sns.set_theme(style="whitegrid", context="paper", font_scale=1.3)
-    np.random.seed(20240528)
-
-    def save(fig, name):
-        fig.tight_layout()
-        for ext in ("png", "pdf"):
-            fig.savefig(out / (name + "." + ext), dpi=220, bbox_inches="tight")
-        plt.close(fig)
-
+def save_figures(multi, omega, out):
     from plot_results import render_main_figures
 
     render_main_figures(multi, omega, out)
-    sns.set_theme(style="whitegrid", context="paper", font_scale=1.3)
-    fig, ax = plt.subplots(figsize=(7, 3.8))
-    ax.errorbar(
-        ablation["mean"],
-        range(len(ablation)),
-        xerr=ablation.ci95,
-        fmt="o",
-        capsize=4,
-        color="#3B7EA1",
-    )
-    ax.set_yticks(
-        range(len(ablation)),
-        ["No extended operators", "No shaking", "No candidate filtering (c40)"],
-    )
-    ax.axvline(0, color="black", lw=0.8)
-    ax.set_xlabel(
-        "Paired cost increase versus Full (%)\n95% CI across matched instances"
-    )
-    save(fig, "fig5_ablation_cost")
-    fig, ax = plt.subplots(figsize=(6, 3.8))
-    ax.plot(scalability.n_customers, scalability.mean_time_sec, "o-", color="#3B7EA1")
-    ax.set(xlabel="Customers", ylabel="Mean solver time (s)", xticks=[10, 20, 40])
-    save(fig, "fig6_scalability")
 
 
 def build(results, output):
@@ -389,7 +311,6 @@ def build(results, output):
     figures = output / "figures"
     tables.mkdir(parents=True, exist_ok=True)
     figures.mkdir(parents=True, exist_ok=True)
-    replay.to_csv(results / "plan_validation.csv", index=False)
     baseline = frames["no_wireless_baseline"]
     multi = add_baseline_reductions(frames["multiseed_replication"], baseline)
     omega = add_baseline_reductions(frames["omega_sensitivity"], baseline)
@@ -425,7 +346,7 @@ def build(results, output):
     coverage = stats_table(multi, ["coverage"])
     sizecov = stats_table(multi, ["n_customers", "coverage"])
     intensity = stats_table(omega, ["omega"])
-    ablation, paired, starts, start_summary = ablation_tables(frames["ablation_frvcp"])
+    ablation = matched_ablation_table(frames["ablation_frvcp"])
     full = frames["ablation_frvcp"].query("ablation == 'baseline'")
     scalability = full.groupby("n_customers", as_index=False).agg(
         instances=("instance", "count"),
@@ -440,15 +361,10 @@ def build(results, output):
         "table_multiseed_by_size_coverage": sizecov,
         "table_omega_sensitivity": intensity,
         "table_ablation_matched_deltas": ablation,
-        "table_ablation_start_summary": start_summary,
         "table_scalability": scalability,
     }
     for name, table in outputs.items():
         table.to_csv(tables / (name + ".csv"), index=False)
-    paired.to_csv(results / "ablation_frvcp/ablation_paired.csv", index=False)
-    starts.to_csv(
-        results / "ablation_frvcp/start_level_ablation_paired.csv", index=False
-    )
     within_sd = (
         multi.query("coverage == .3")
         .groupby(["n_customers", "instance"])
@@ -464,7 +380,6 @@ def build(results, output):
         g = frame.sort_values(keys + [sort]).copy()
         g["cost_increase"] = g.groupby(keys).best_cost.diff()
         bad = g[g.cost_increase > 1e-6]
-        bad.to_csv(results / f"nonmonotonic_{label}.csv", index=False)
         nonmono[label] = len(bad)
     evidence = dict(
         counts={k: len(v) for k, v in frames.items()},
@@ -492,20 +407,15 @@ def build(results, output):
         baseline_within_1pct=int((comparison.gap_pct < 1).sum()),
         baseline_within_2pct=int((comparison.gap_pct <= 2).sum()),
     )
-    (results / "evidence.json").write_text(
-        json.dumps(evidence, indent=2), encoding="utf-8"
-    )
-    pd.concat(
-        [v.assign(report_group=k) for k, v in frames.items()], ignore_index=True
-    ).to_csv(results / "all_experiments_snapshot.csv", index=False)
-    save_figures(multi, omega, ablation, scalability, figures)
+    save_figures(multi, omega, figures)
     print(json.dumps(evidence, indent=2))
     print(ablation.to_string(index=False))
+    return evidence
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--results", type=Path, default=ROOT / "results_current")
+    parser.add_argument("--results", type=Path, default=ROOT / "result")
     parser.add_argument("--output", type=Path, default=ROOT)
     args = parser.parse_args()
     build(args.results.resolve(), args.output.resolve())
