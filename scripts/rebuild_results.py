@@ -10,6 +10,7 @@ import json
 from pathlib import Path
 import random
 import sys
+import zipfile
 
 import numpy as np
 import pandas as pd
@@ -61,7 +62,7 @@ def selected_arcs(name, n, coverage, seed):
     return sorted((a, b) for i, j in pairs[:count] for a, b in [(i, j), (j, i)])
 
 
-def validate(frames, results):
+def validate(frames, results, details_archive=None):
     from frvcpy import translator
 
     baseline = frames["no_wireless_baseline"]
@@ -162,7 +163,12 @@ def validate(frames, results):
         arcs = selected_arcs(
             row.instance, row.n_customers, row.coverage, row.placement_seed
         )
-        detail = json.loads((results / row.details_file).read_text(encoding="utf-8"))
+        if details_archive is None:
+            detail = json.loads(
+                (results / row.details_file).read_text(encoding="utf-8")
+            )
+        else:
+            detail = json.loads(details_archive.read(Path(row.details_file).as_posix()))
         assert sorted(map(tuple, detail["equipped_arcs"])) == arcs
         assert (
             detail["case_id"] == row.case_id
@@ -371,7 +377,14 @@ def save_figures(multi, omega, ablation, scalability, out):
 
 def build(results, output):
     frames = {k: pd.read_csv(results / k / f) for k, f in FILES.items()}
-    replay = validate(frames, results)
+    with contextlib.ExitStack() as stack:
+        archive_path = results / "case_details.zip"
+        details_archive = (
+            stack.enter_context(zipfile.ZipFile(archive_path))
+            if archive_path.is_file()
+            else None
+        )
+        replay = validate(frames, results, details_archive)
     tables = output / "tables"
     figures = output / "figures"
     tables.mkdir(parents=True, exist_ok=True)
@@ -486,9 +499,6 @@ def build(results, output):
         [v.assign(report_group=k) for k, v in frames.items()], ignore_index=True
     ).to_csv(results / "all_experiments_snapshot.csv", index=False)
     save_figures(multi, omega, ablation, scalability, figures)
-    from export_latex import export
-
-    export(output, results)
     print(json.dumps(evidence, indent=2))
     print(ablation.to_string(index=False))
 
