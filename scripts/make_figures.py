@@ -10,8 +10,8 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT))
-from result_statistics import grouped_instance_summary, add_baseline_reductions
+sys.path.insert(0, str(ROOT / "src"))
+from evrp_dwc.result_statistics import grouped_instance_summary, add_baseline_reductions
 RESULTS = ROOT / "result"
 OUT_DIR = ROOT / "figures"
 

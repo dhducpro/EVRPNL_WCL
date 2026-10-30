@@ -1,29 +1,24 @@
-"""Rebuild tables and figures from saved results."""
-
-from __future__ import annotations
-
-import argparse
+from pathlib import Path
 import contextlib
 import hashlib
 import io
 import json
-from pathlib import Path
 import random
 import sys
 import zipfile
 
 import numpy as np
 import pandas as pd
-from scipy.stats import t
 
 ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT))
-from result_statistics import (
-    add_baseline_reductions,
-    check_result_versions,
-    instance_summary,
+sys.path.insert(0, str(ROOT / "src"))
+from evrp_dwc.paths import BENCHMARK_XML_DIR, RESULTS_RAW_DIR
+from evrp_dwc.result_statistics import (
+    add_baseline_reductions, check_result_versions, grouped_instance_summary,
+    ablation_summary,
 )
 
+RESULTS = RESULTS_RAW_DIR
 FILES = {
     "no_wireless_baseline": "no_wireless_all.csv",
     "multiseed_replication": "multiseed_all.csv",
@@ -35,24 +30,15 @@ PAIR_KEYS = ["instance", "coverage", "omega", "placement_seed", "solver_seed"]
 
 
 def normalized_hash(path):
-    return hashlib.sha256(Path(path).read_text(encoding="utf-8").encode()).hexdigest()
+    source = Path(path).read_text(encoding="utf-8")
+    source = source.replace("from .frvcp_dwc import ", "from frvcp_dwc import ")
+    return hashlib.sha256(source.encode()).hexdigest()
 
 
 def object_hash(value):
     return hashlib.sha256(
         json.dumps(value, sort_keys=True, allow_nan=False).encode()
     ).hexdigest()
-
-
-def paired_summary(group, column):
-    values = group[column].astype(float)
-    return {
-        "mean": float(values.mean()),
-        "ci95": float(
-            t.ppf(0.975, len(values) - 1) * values.std(ddof=1) / np.sqrt(len(values))
-        ),
-    }
-
 
 def selected_arcs(name, n, coverage, seed):
     pairs = [(i, j) for i in range(1, n + 1) for j in range(i + 1, n + 1)]
@@ -61,12 +47,11 @@ def selected_arcs(name, n, coverage, seed):
     count = max(1, int(len(pairs) * coverage)) if coverage > 0 else 0
     return sorted((a, b) for i, j in pairs[:count] for a, b in [(i, j), (j, i)])
 
-
 def validate(frames, results, details_archive=None):
     from frvcpy import translator
 
     baseline = frames["no_wireless_baseline"]
-    names = set(p.name for p in (ROOT / "data").glob("*.xml"))
+    names = set(p.name for p in BENCHMARK_XML_DIR.glob("*.xml"))
     assert (
         len(names) == 60
         and set(baseline.instance) == names
@@ -108,20 +93,20 @@ def validate(frames, results, details_archive=None):
         all_rows[["best_cost", "vehicles", "solver_time_sec"]].to_numpy(float)
     ).all()
     assert all_rows.search_sha256.eq(
-        normalized_hash(ROOT / "tabu_search_impl.py")
+        normalized_hash(ROOT / "src/evrp_dwc/tabu_search.py")
     ).all()
-    assert all_rows.charging_sha256.eq(normalized_hash(ROOT / "frvcp_dwc.py")).all()
+    assert all_rows.charging_sha256.eq(normalized_hash(ROOT / "src/evrp_dwc/frvcp_dwc.py")).all()
     data_cache = {}
     replay = []
     for row in all_rows.drop_duplicates("execution_id").itertuples(index=False):
         if row.instance not in data_cache:
             with contextlib.redirect_stdout(io.StringIO()):
                 data_cache[row.instance] = translator.translate(
-                    (ROOT / "data" / row.instance).as_posix(), depot_charging=True
+                    (BENCHMARK_XML_DIR / row.instance).as_posix(), depot_charging=True
                 )
         data = data_cache[row.instance]
         assert (
-            hashlib.sha256((ROOT / "data" / row.instance).read_bytes()).hexdigest()
+            hashlib.sha256((BENCHMARK_XML_DIR / row.instance).read_bytes()).hexdigest()
             == row.input_sha256
         )
         protocol = json.loads(row.protocol_json)
@@ -239,183 +224,72 @@ def validate(frames, results, details_archive=None):
     )
     return pd.DataFrame(replay)
 
+def verify_wireless_overlay_files(multiseed, omega, wireless_dir=None):
+    """Fail on missing/duplicated arcs, wrong energy values or raw-run totals."""
+    wireless_dir = Path(wireless_dir) if wireless_dir is not None else ROOT / "data/wireless_instances"
+    manifest = pd.read_csv(wireless_dir / "wireless_arc_manifest.csv")
+    selected = pd.read_csv(wireless_dir / "selected_directed_arcs_all.csv")
+    energy = pd.read_csv(wireless_dir / "energy_overlay_all_experiment_combinations.csv")
+    keys = ["instance", "placement_seed", "coverage", "coverage_pct"]
+    arc_keys = keys + ["from_node", "to_node"]
+    energy_keys = arc_keys + ["omega"]
+    for name, frame, unique_keys in (("manifest", manifest, keys), ("selected arcs", selected, arc_keys), ("energy overlay", energy, energy_keys)):
+        if frame.empty or frame[unique_keys].isna().any().any() or frame.duplicated(unique_keys).any():
+            raise ValueError(f"Missing identifiers, empty file or duplicate keys in {name}")
+    values = energy[["base_energy_wh", "omega", "reduced_energy_wh", "energy_reduction_wh"]].to_numpy(float)
+    if not np.isfinite(values).all() or (energy["base_energy_wh"] < 0).any() or not energy["omega"].between(0, 1).all():
+        raise ValueError("Invalid energy values/intensities")
+    expected = energy["base_energy_wh"] * (1 - energy["omega"])
+    if not np.allclose(energy["reduced_energy_wh"], expected, rtol=1e-10, atol=1e-7):
+        raise ValueError("Overlay violates E_dwc = (1 - omega) E_base; regenerate old floor-based files")
+    if not np.allclose(energy["energy_reduction_wh"], energy["base_energy_wh"] - expected, rtol=1e-10, atol=1e-7):
+        raise ValueError("Incorrect energy_reduction_wh")
+    # Independently recompute physical base energy from the benchmark XML.
+    from evrp_dwc.instance_io import parse_instance, base_energy
+    for name, group in selected.groupby("instance"):
+        nodes, rate = parse_instance(ROOT / "data/benchmark_xml" / name)
+        by_id = {node.node_id: node for node in nodes}
+        physical = [base_energy(by_id, rate, i, j) for i, j in zip(group.from_node, group.to_node)]
+        if not np.allclose(group["base_energy_wh"], physical, rtol=1e-10, atol=1e-7):
+            raise ValueError(f"Wrong physical base energy for {name}")
+    attached = energy.merge(selected[arc_keys + ["base_energy_wh"]], on=arc_keys, how="left", suffixes=("", "_selected"), validate="many_to_one")
+    if attached["base_energy_wh_selected"].isna().any() or not np.allclose(attached["base_energy_wh"], attached["base_energy_wh_selected"], rtol=1e-10, atol=1e-7):
+        raise ValueError("Energy rows do not match selected physical arcs")
+    counts = selected.groupby(keys, as_index=False).size().rename(columns={"size": "selected_calc"})
+    manifest_counts = manifest.merge(counts, on=keys, how="left", validate="one_to_one")
+    if not (manifest_counts["selected_directed_arc_count"] == manifest_counts["selected_calc"].fillna(0)).all():
+        raise ValueError("Selected arc file disagrees with manifest")
+    totals = energy.assign(applied=energy["energy_reduction_wh"] > 0).groupby(keys + ["omega"], as_index=False).agg(
+        selected_energy_calc=("from_node", "size"), applied_calc=("applied", "sum"), reduction_calc=("energy_reduction_wh", "sum"))
+    for name, raw in (("multiseed", multiseed), ("omega sensitivity", omega)):
+        if raw.duplicated(keys + ["omega", "solver_seed"]).any():
+            raise ValueError(f"Duplicate experiment keys in {name}")
+        checked = raw.merge(manifest[keys + ["selected_directed_arc_count"]], on=keys, how="left", validate="many_to_one").merge(totals, on=keys + ["omega"], how="left", validate="many_to_one")
+        if checked["selected_directed_arc_count"].isna().any():
+            raise ValueError(f"Missing manifest matches in {name}")
+        zero = checked["selected_directed_arc_count"] == 0
+        checked.loc[zero, ["selected_energy_calc", "applied_calc", "reduction_calc"]] = checked.loc[zero, ["selected_energy_calc", "applied_calc", "reduction_calc"]].fillna(0)
+        for recorded, calculated in (("selected_arcs", "selected_directed_arc_count"), ("selected_arcs", "selected_energy_calc"), ("applied_arcs", "applied_calc"), ("total_reduction", "reduction_calc")):
+            if not np.allclose(checked[recorded], checked[calculated], rtol=1e-10, atol=1e-6):
+                raise ValueError(f"{name}: {recorded} disagrees with {calculated}")
+    print(f"Verified physical energies, linear overlays and raw totals ({len(energy)} energy rows).")
 
-def stats_table(frame, keys):
-    rows = []
-    for key, g in frame.groupby(keys, sort=True):
-        vals = key if isinstance(key, tuple) else (key,)
-        rows.append(
-            dict(
-                zip(keys, vals),
-                **instance_summary(g),
-                min_pct=g.reduction_pct.min(),
-                max_pct=g.reduction_pct.max(),
-                fleet_reduction_rate_pct=100 * g.fleet_reduced.mean(),
-                non_deteriorating=int(g.non_deteriorating.sum()),
-            )
-        )
-    return pd.DataFrame(rows)
-
-
-def matched_ablation_table(raw):
-    full = raw[raw.ablation.eq("baseline")]
-    summaries = []
-    metrics = {
-        "best_cost": "cost",
-        "vehicles": "vehicles",
-        "solver_time_sec": "time",
-        "frvcp_calls": "calls",
-        "frvcp_avg_time_ms": "call_ms",
-    }
-    for variant in VARIANTS:
-        m = raw[raw.ablation.eq(variant)].merge(
-            full, on=PAIR_KEYS, suffixes=("", "_full"), validate="one_to_one"
-        )
-        m["cost_change_pct"] = 100 * (m.best_cost / m.best_cost_full - 1)
-        m["full_win"] = m.best_cost_full < m.best_cost - 1e-6
-        m["variant_win"] = m.best_cost_full > m.best_cost + 1e-6
-        m["tie"] = ~(m.full_win | m.variant_win)
-        summary = dict(
-            setting=variant,
-            n_overlap=len(m),
-            **paired_summary(m, "cost_change_pct"),
-            full_wins=int(m.full_win.sum()),
-            ties=int(m.tie.sum()),
-            variant_wins=int(m.variant_win.sum()),
-        )
-        for metric, label in metrics.items():
-            summary["delta_" + label + "_pct"] = 100 * (
-                m[metric].mean() / m[metric + "_full"].mean() - 1
-            )
-        summaries.append(summary)
-    return pd.DataFrame(summaries)
-
-
-def save_figures(multi, omega, out):
-    from plot_results import render_main_figures
-
-    render_main_figures(multi, omega, out)
-
-
-def build(results, output):
-    frames = {k: pd.read_csv(results / k / f) for k, f in FILES.items()}
+def verify_results(results=RESULTS):
+    results = Path(results)
+    frames = {name: pd.read_csv(results / name / filename)
+              for name, filename in FILES.items()}
     with contextlib.ExitStack() as stack:
         archive_path = results / "case_details.zip"
-        details_archive = (
-            stack.enter_context(zipfile.ZipFile(archive_path))
-            if archive_path.is_file()
-            else None
-        )
-        replay = validate(frames, results, details_archive)
-    tables = output / "tables"
-    figures = output / "figures"
-    tables.mkdir(parents=True, exist_ok=True)
-    figures.mkdir(parents=True, exist_ok=True)
-    baseline = frames["no_wireless_baseline"]
-    multi = add_baseline_reductions(frames["multiseed_replication"], baseline)
-    omega = add_baseline_reductions(frames["omega_sensitivity"], baseline)
-    ref = pd.read_csv(ROOT / "data/montoya_reference_costs.csv")
-    comparison = baseline.merge(ref, on="instance", validate="one_to_one")
-    comparison["gap_pct"] = 100 * (comparison.best_cost / comparison.montoya_cost - 1)
-    comparison[
-        [
-            "instance",
-            "n_customers",
-            "best_cost",
-            "vehicles",
-            "solver_time_sec",
-            "montoya_cost",
-            "montoya_optimal",
-            "gap_pct",
-        ]
-    ].to_csv(tables / "baseline_vs_montoya.csv", index=False)
-    vrows = []
-    for size, g in comparison.groupby("n_customers"):
-        vrows.append(
-            dict(
-                n_customers=size,
-                instances=len(g),
-                within_1pct=int((g.gap_pct < 1).sum()),
-                gap_1_to_2pct=int(g.gap_pct.between(1, 2, inclusive="both").sum()),
-                above_2pct=int((g.gap_pct > 2).sum()),
-                max_gap_pct=g.gap_pct.max(),
-                mean_time_sec=g.solver_time_sec.mean(),
-            )
-        )
-    validation = pd.DataFrame(vrows)
-    coverage = stats_table(multi, ["coverage"])
-    sizecov = stats_table(multi, ["n_customers", "coverage"])
-    intensity = stats_table(omega, ["omega"])
-    ablation = matched_ablation_table(frames["ablation_frvcp"])
-    full = frames["ablation_frvcp"].query("ablation == 'baseline'")
-    scalability = full.groupby("n_customers", as_index=False).agg(
-        instances=("instance", "count"),
-        mean_time_sec=("solver_time_sec", "mean"),
-        mean_frvcp_calls=("frvcp_calls", "mean"),
-        mean_frvcp_call_ms=("frvcp_avg_time_ms", "mean"),
-        mean_search_calls_per_iteration=("frvcp_search_calls_per_iteration", "mean"),
-    )
-    outputs = {
-        "table_validation": validation,
-        "table_multiseed_coverage": coverage,
-        "table_multiseed_by_size_coverage": sizecov,
-        "table_omega_sensitivity": intensity,
-        "table_ablation_matched_deltas": ablation,
-        "table_scalability": scalability,
-    }
-    for name, table in outputs.items():
-        table.to_csv(tables / (name + ".csv"), index=False)
-    within_sd = (
-        multi.query("coverage == .3")
-        .groupby(["n_customers", "instance"])
-        .reduction_pct.std()
-        .groupby("n_customers")
-        .mean()
-    )
-    nonmono = {}
-    for label, frame, sort, keys in [
-        ("placement", multi, "coverage", ["instance", "placement_seed"]),
-        ("intensity", omega, "omega", ["instance", "coverage"]),
-    ]:
-        g = frame.sort_values(keys + [sort]).copy()
-        g["cost_increase"] = g.groupby(keys).best_cost.diff()
-        bad = g[g.cost_increase > 1e-6]
-        nonmono[label] = len(bad)
-    evidence = dict(
-        counts={k: len(v) for k, v in frames.items()},
-        distinct_plans=len(replay),
-        overall=instance_summary(multi),
-        overall_min=multi.reduction_pct.min(),
-        overall_max=multi.reduction_pct.max(),
-        overall_fleet_rate=100 * multi.fleet_reduced.mean(),
-        placement_non_deteriorating=int(multi.non_deteriorating.sum()),
-        intensity_non_deteriorating=int(omega.non_deteriorating.sum()),
-        zero_placement=int((abs(multi.reduction_pct) < 1e-6).sum()),
-        zero_intensity=int((abs(omega.reduction_pct) < 1e-6).sum()),
-        zero_placement_by_coverage=multi[abs(multi.reduction_pct) < 1e-6]
-        .groupby("coverage")
-        .size()
-        .to_dict(),
-        zero_intensity_by_omega=omega[abs(omega.reduction_pct) < 1e-6]
-        .groupby("omega")
-        .size()
-        .to_dict(),
-        within_instance_sd_30=within_sd.to_dict(),
-        nonmonotonic=nonmono,
-        full_mean_cost=full.best_cost.mean(),
-        full_mean_vehicles=full.vehicles.mean(),
-        baseline_within_1pct=int((comparison.gap_pct < 1).sum()),
-        baseline_within_2pct=int((comparison.gap_pct <= 2).sum()),
-    )
-    save_figures(multi, omega, figures)
-    print(json.dumps(evidence, indent=2))
-    print(ablation.to_string(index=False))
-    return evidence
+        details = stack.enter_context(zipfile.ZipFile(archive_path)) if archive_path.is_file() else None
+        replay = validate(frames, results, details)
+    verify_wireless_overlay_files(frames["multiseed_replication"], frames["omega_sensitivity"])
+    return frames, replay
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--results", type=Path, default=ROOT / "result")
-    parser.add_argument("--output", type=Path, default=ROOT)
-    args = parser.parse_args()
-    build(args.results.resolve(), args.output.resolve())
+    frames, replay = verify_results()
+    baseline = frames["no_wireless_baseline"]
+    for name, key in [("multiseed_replication", "coverage_pct"), ("omega_sensitivity", "omega")]:
+        data = add_baseline_reductions(frames[name], baseline)
+        print(grouped_instance_summary(data, key).to_string(index=False))
+    print(ablation_summary(frames["ablation_frvcp"]).to_string(index=False))

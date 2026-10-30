@@ -36,7 +36,7 @@ from contextlib import contextmanager
 from dataclasses import dataclass
 from typing import Any, Dict, List, Optional, Sequence, Set, Tuple
 
-from frvcp_dwc import DwcEnergyBounds, DwcFrvcpSolver
+from .frvcp_dwc import DwcEnergyBounds, DwcFrvcpSolver
 
 # Note: These imports assume the existence of 'core' and 'solver' modules
 # Users should ensure these are available in their environment

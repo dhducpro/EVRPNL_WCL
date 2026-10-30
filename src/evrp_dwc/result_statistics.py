@@ -79,6 +79,6 @@ def ablation_summary(frame):
         n=("instance", "count"), mean_cost=("best_cost", "mean"),
         mean_vehicles=("vehicles", "mean"), mean_solver_time_sec=("solver_time_sec", "mean"),
         mean_frvcp_calls=("frvcp_calls", "mean"), mean_frvcp_ms=("frvcp_avg_time_ms", "mean"))
-    if "campaign_id" in data:
+    if "campaign_id" in data and data["campaign_id"].nunique() == 1:
         summary["campaign_id"] = data["campaign_id"].iloc[0]
     return summary.sort_values("ablation")

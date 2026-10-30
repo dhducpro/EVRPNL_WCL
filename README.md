@@ -23,7 +23,7 @@ src/
     wireless_generation.py
   generate_wireless_instances.py
 experiments/
-results_raw/
+result/
 scripts/
   verify_key_results.py
   make_tables.py
@@ -113,7 +113,7 @@ Figures 1 and 2 use the multi-seed replication and omega-sensitivity outputs. Fi
 
 - `data/benchmark_xml/` contains the EVRP-NL benchmark XML instances used in the study.
 - `data/wireless_instances/` contains explicit DWC placement and wireless-energy overlay files for all reported placement seeds and coverage levels.
-- `results_raw/` contains the raw CSV outputs needed for manuscript verification:
+- `result/` contains the raw CSV outputs needed for manuscript verification:
   - `no_wireless_baseline/`
   - `multiseed_replication/`
   - `omega_sensitivity/`
