@@ -1,130 +1,132 @@
-# Electric Vehicle Routing with Nonlinear Charging and Wireless Lanes
+# Electric Vehicle Fleet Routing with Nonlinear Station Charging and Dynamic Wireless Lanes
 
-Code and results for **Electric Vehicle Fleet Routing with Nonlinear Station
-Charging and Dynamic Wireless Lanes for Sustainable Urban Logistics**.
+This repository contains the data, code, raw outputs, and verification scripts for:
 
-The current code uses five starts per solve, up to 100 iterations per start
-and 800 sampled candidates per iteration. Ablation uses `gamma = 0.10` and
-`omega = 0.90`, with fixed placement and solver base seeds.
+**Electric Vehicle Fleet Routing with Nonlinear Station Charging and Dynamic Wireless Lanes for Sustainable Urban Logistics**
 
-## Setup
+The package is designed to reproduce the key numerical claims in the manuscript without rerunning the full tabu-search campaign.
+
+## Structure
+
+```text
+README.md
+requirements.txt
+data/
+  benchmark_xml/
+  wireless_instances/
+src/
+  evrp_dwc/
+    csv_io.py
+    instance_io.py
+    paths.py
+    tabu_search.py
+    wireless_generation.py
+  generate_wireless_instances.py
+experiments/
+result/
+scripts/
+  verify_key_results.py
+  make_tables.py
+  make_figures.py
+figures/
+tables/
+```
+
+## Environment
+
+The experiments were run with:
+
+- Python 3.11.1
+- `frvcpy` 0.1.1
+- MacBook with Apple M1 processor
+- 8 GB RAM
+
+Install dependencies with:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-The experiment environment is recorded in each campaign manifest. The solver
-uses frvcpy 0.1.1; the reporting commands also need pandas, SciPy and matplotlib.
+If importing package modules directly from an interactive session, expose the
+`src/` directory first. In PowerShell:
 
-## Layout
-
-```text
-data/benchmark_xml/           benchmark instances
-data/wireless_instances/      wireless placements and energy overlays
-src/evrp_dwc/                solver, evaluator and shared helpers
-experiments/                 experiment notebook
-result/                     result files and local campaign runs
-scripts/                    verification and reporting
-tables/                     manuscript tables as CSV
-figures/                    manuscript figures
+```powershell
+$env:PYTHONPATH = "src"
 ```
 
-## Import and check results
+## Quick Verification
 
-This package includes the completed 800-candidate numeric results, tables and
-figures. From the repository root:
+From the repository root, run:
 
 ```bash
 python scripts/verify_key_results.py
+```
+
+The script recomputes:
+
+- five-seed DWC placement replication statistics at `omega = 0.9`
+- wireless-intensity sensitivity statistics for `omega in {0.3, 0.5, 0.7, 0.9}`
+- ablation summary values
+- consistency between reported `selected_arcs`/`applied_arcs` and the explicit wireless placement files
+
+## Regenerating Tables and Figures
+
+To regenerate CSV versions of the manuscript tables:
+
+```bash
 python scripts/make_tables.py
+```
+
+This script writes the following table files to `tables/`:
+
+- `table_validation.csv`
+- `table_multiseed_coverage.csv`
+- `table_multiseed_by_size_coverage.csv`
+- `table_omega_sensitivity.csv`
+- `table_ablation_summary.csv`
+
+To regenerate the figures computed directly from the multi-seed and omega-sensitivity CSV files:
+
+```bash
 python scripts/make_figures.py
-python scripts/test_reporting.py
 ```
 
-These commands check the 1,900 solve records, the 1,100 individual ablation
-starts, solver/input hashes, complete experimental grids and repeated settings.
-They regenerate the manuscript tables and four result figures.
+This script writes the following figures to `figures/`:
 
-The included results are a compact numeric export. They omit routes, charging
-plans and search traces, so the default check does not claim to replay battery
-or route-duration feasibility. For a complete campaign containing those plans:
+- `fig1_replication_distribution.png`
+- `fig2_omega_sensitivity_trend.png`
+- `fig3_vehicle_reduction_coverage.png`
+- `fig4_heatmap_cost.png`
 
-```bash
-python scripts/verify_key_results.py --results result/runs/RUN_NAME --replay-plans
-```
+Figures 1 and 2 use the multi-seed replication and omega-sensitivity outputs. Figures 3 and 4 are single-placement diagnostics generated from `omega_sensitivity_all.csv` by selecting `omega = 0.9` and `placement_seed = 20240528`, then comparing against `no_wireless_all.csv`.
 
-The three large precomputed wireless CSVs are unchanged from GitHub and are
-omitted from this ZIP. Keep them when updating an existing checkout, or
-regenerate them with `python src/generate_wireless_instances.py`. To check the
-placement files and physical energy overlays after generation:
+## Source Code Layout
 
-```bash
-python scripts/verify_key_results.py --check-overlays
-```
+- `src/evrp_dwc/instance_io.py` parses benchmark XML files and exposes node, distance, and energy helpers.
+- `src/evrp_dwc/wireless_generation.py` contains the deterministic wireless-placement and energy-overlay generation logic.
+- `src/evrp_dwc/paths.py` centralizes package paths used by source modules.
+- `src/evrp_dwc/csv_io.py` contains shared CSV writing utilities.
+- `src/evrp_dwc/tabu_search.py` contains the tabu-search implementation.
+- `src/generate_wireless_instances.py` is the command-line entry point for regenerating wireless placement files.
 
-## Run experiments
+## Data and Results
 
-Open `experiments/full_multiseed_sensitivity_ablation_frvcp.ipynb` and run all
-cells. Launch it from the repository root or `experiments/`. Set
-`INSTANCE_LIMIT = 1` for a short run.
+- `data/benchmark_xml/` contains the EVRP-NL benchmark XML instances used in the study.
+- `data/wireless_instances/` contains explicit DWC placement and wireless-energy overlay files for all reported placement seeds and coverage levels.
+- `result/` contains the raw CSV outputs needed for manuscript verification:
+  - `no_wireless_baseline/`
+  - `multiseed_replication/`
+  - `omega_sensitivity/`
+  - `ablation_frvcp/`
 
-Fresh campaigns are saved under `result/runs/`. The reported CSVs are left in
-place. To resume, set `RESUME_OUTPUT_DIR` to the saved campaign path. A resume
-requires matching inputs, source, environment and settings.
+The raw outputs included here are sufficient to reproduce the manuscript tables. Rerunning `experiments/full_multiseed_sensitivity_ablation_frvcp.ipynb` may create additional intermediate CSV files.
 
-The notebook runs the no-DWC baseline, five wireless placements per coverage,
-the intensity sweep and the ablation study. Each solve uses a separate route
-cache. The optional five-solver-base-seed experiment is disabled by default;
-it was not part of the reported campaign.
+## Re-running Wireless Placement Generation
 
-## Statistics
-
-DWC reductions are averaged within each instance before computing the mean
-and Student-t confidence interval across instances. Pooled run-level SDs are
-reported separately.
-
-All percentage columns in `table_ablation_matched_deltas.csv` use the mean of
-matched-instance percentage changes, `mean(100 * (variant / Full - 1))`.
-`delta_cost_start_pct` pairs individual starts by instance and start seed.
-These are starts within a solve, not independent repetitions of the complete
-five-start algorithm. FRVCP counters in the imported start-level CSV accumulate
-across starts; difference them before interpreting per-start workload.
-
-The main ablation table contains three individual removals. The additional
-20 c40 joint-removal cases are in `table_ablation_all_variants.csv`. Candidate
-filtering is active only on c40, so its comparison uses 20 instances.
-
-## Wireless placements
+The wireless placement files can be regenerated with:
 
 ```bash
 python src/generate_wireless_instances.py
 ```
 
-Coverage is defined over undirected customer pairs; both directions are
-equipped. Placements are nested across coverage levels for each instance and
-seed. On an equipped arc, `E_dwc = (1 - omega) * E_base`, without an energy floor.
-
-## Import another result ZIP
-
-```bash
-python scripts/import_results.py /path/to/results.zip
-```
-
-The importer validates the export before writing it and saves existing CSVs and
-any old plan archive under `result/archive_TIMESTAMP/`. It keeps the current
-result filenames. Importing is local and does not push any files to GitHub.
-
-## Updating your checkout
-
-Copy these files into your existing checkout, keeping its `.git` directory.
-The old `result/case_details.zip`, if present, belongs to the 1,200-candidate
-campaign; remove it from the current result folder or move it to a local archive.
-It is not a charging-plan archive for the included 800-candidate CSVs.
-
-## Earlier results
-
-The previous 1,200-candidate campaign and its detailed plan archive remain in
-[commit 8f6b24d](https://github.com/dhducpro/EVRPNL_WCL/tree/8f6b24d7eaa8c4210de8c3876e2fc0889b219e28).
-The solver and evaluator match the recorded 800-candidate experiment source.
-The notebook and reporting commands use the new protocol; the original run
-metadata is retained unchanged.
+The script shuffles customer-to-customer undirected pairs and selects `floor(coverage * number_of_pairs)` pairs, represented symmetrically as directed arcs.
