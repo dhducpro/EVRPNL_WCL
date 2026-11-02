@@ -1,4 +1,5 @@
 from pathlib import Path
+import argparse
 import contextlib
 import hashlib
 import io
@@ -15,7 +16,7 @@ sys.path.insert(0, str(ROOT / "src"))
 from evrp_dwc.paths import BENCHMARK_XML_DIR, RESULTS_RAW_DIR
 from evrp_dwc.result_statistics import (
     add_baseline_reductions, check_result_versions, grouped_instance_summary,
-    ablation_summary,
+    ablation_summary, START_KEYS,
 )
 
 RESULTS = RESULTS_RAW_DIR
@@ -26,12 +27,12 @@ FILES = {
     "ablation_frvcp": "ablation_frvcp_raw.csv",
 }
 VARIANTS = ["no_extended_operators", "no_shaking", "no_candidate_filtering"]
+ALL_VARIANTS = VARIANTS + ["no_filter_no_extended"]
 PAIR_KEYS = ["instance", "coverage", "omega", "placement_seed", "solver_seed"]
 
 
 def normalized_hash(path):
     source = Path(path).read_text(encoding="utf-8")
-    source = source.replace("from .frvcp_dwc import ", "from frvcp_dwc import ")
     return hashlib.sha256(source.encode()).hexdigest()
 
 
@@ -47,55 +48,10 @@ def selected_arcs(name, n, coverage, seed):
     count = max(1, int(len(pairs) * coverage)) if coverage > 0 else 0
     return sorted((a, b) for i, j in pairs[:count] for a, b in [(i, j), (j, i)])
 
-def validate(frames, results, details_archive=None):
+def replay_plans(frames, results, details_archive=None):
     from frvcpy import translator
 
-    baseline = frames["no_wireless_baseline"]
-    names = set(p.name for p in BENCHMARK_XML_DIR.glob("*.xml"))
-    assert (
-        len(names) == 60
-        and set(baseline.instance) == names
-        and not baseline.instance.duplicated().any()
-    )
-    check_result_versions(*frames.values())
-    expected = {
-        "multiseed_replication": {
-            (n, g, 0.9, s, 20240528, "baseline")
-            for n in names
-            for g in [0.1, 0.2, 0.3]
-            for s in range(20240528, 20240533)
-        },
-        "omega_sensitivity": {
-            (n, g, w, 20240528, 20240528, "baseline")
-            for n in names
-            for g in [0.1, 0.2, 0.3]
-            for w in [0.3, 0.5, 0.7, 0.9]
-        },
-        "ablation_frvcp": {
-            (n, 0.1, 0.9, 20240528, 20240528, v)
-            for n in names
-            for v in ["baseline"] + VARIANTS
-            if v != "no_candidate_filtering"
-            or int(baseline.set_index("instance").loc[n, "n_customers"]) == 40
-        },
-    }
-    for label, keys in expected.items():
-        frame = frames[label]
-        cols = PAIR_KEYS + ["ablation"]
-        actual = set(frame[cols].itertuples(index=False, name=None))
-        if actual != keys or frame.duplicated(cols).any():
-            raise ValueError(
-                f"{label}: missing={len(keys-actual)}, unexpected={len(actual-keys)}"
-            )
     all_rows = pd.concat(frames.values(), ignore_index=True)
-    assert all_rows.error.isna().all()
-    assert np.isfinite(
-        all_rows[["best_cost", "vehicles", "solver_time_sec"]].to_numpy(float)
-    ).all()
-    assert all_rows.search_sha256.eq(
-        normalized_hash(ROOT / "src/evrp_dwc/tabu_search.py")
-    ).all()
-    assert all_rows.charging_sha256.eq(normalized_hash(ROOT / "src/evrp_dwc/frvcp_dwc.py")).all()
     data_cache = {}
     replay = []
     for row in all_rows.drop_duplicates("execution_id").itertuples(index=False):
@@ -117,17 +73,17 @@ def validate(frames, results, details_archive=None):
             and protocol["charging_sha256"] == row.charging_sha256
         )
         assert (
-            kwargs["max_iter"] == 100
-            and protocol["num_runs"] == 5
-            and protocol["max_moves_per_iteration"] == 1200
+            kwargs["max_iter"] == row.max_iter
+            and protocol["num_runs"] == row.num_runs
+            and protocol["max_moves_per_iteration"] == row.max_moves_per_iteration
         )
         assert kwargs["use_extended_operators"] == (
-            row.ablation != "no_extended_operators"
+            row.ablation not in {"no_extended_operators", "no_filter_no_extended"}
         )
         assert kwargs["use_candidate_lists"] == (
-            row.n_customers > 20 and row.ablation != "no_candidate_filtering"
+            row.n_customers > 20 and row.ablation not in {"no_candidate_filtering", "no_filter_no_extended"}
         )
-        assert kwargs["shake_tenure"] == (101 if row.ablation == "no_shaking" else 20)
+        assert kwargs["shake_tenure"] == (row.max_iter + 1 if row.ablation == "no_shaking" else 20)
         assert (
             kwargs["shake_inter_route_only"]
             and kwargs["shake_steps"] == 1
@@ -270,24 +226,169 @@ def verify_wireless_overlay_files(multiseed, omega, wireless_dir=None):
         zero = checked["selected_directed_arc_count"] == 0
         checked.loc[zero, ["selected_energy_calc", "applied_calc", "reduction_calc"]] = checked.loc[zero, ["selected_energy_calc", "applied_calc", "reduction_calc"]].fillna(0)
         for recorded, calculated in (("selected_arcs", "selected_directed_arc_count"), ("selected_arcs", "selected_energy_calc"), ("applied_arcs", "applied_calc"), ("total_reduction", "reduction_calc")):
-            if not np.allclose(checked[recorded], checked[calculated], rtol=1e-10, atol=1e-6):
+            if recorded in checked and not np.allclose(checked[recorded], checked[calculated], rtol=1e-10, atol=1e-6):
                 raise ValueError(f"{name}: {recorded} disagrees with {calculated}")
-    print(f"Verified physical energies, linear overlays and raw totals ({len(energy)} energy rows).")
+    print(f"Verified physical energies, linear overlays and available raw counters ({len(energy)} energy rows).")
 
-def verify_results(results=RESULTS):
+def load_starts(results, ablation):
+    path = Path(results) / "ablation_frvcp/start_level_results.csv"
+    if path.is_file():
+        return pd.read_csv(path)
+    if "start_results_json" not in ablation:
+        raise ValueError("Missing individual ablation start results")
+    rows = []
+    for row in ablation.to_dict("records"):
+        for start in json.loads(row["start_results_json"]):
+            rows.append({**{k: row[k] for k in PAIR_KEYS + ["ablation"]},
+                         **{k: start[k] for k in ["start_index", "start_seed", "best_cost", "vehicles"]},
+                         **start.get("stats", {})})
+    return pd.DataFrame(rows)
+
+
+def load_manifest(results):
+    path = Path(results) / "run_info.json"
+    if path.is_file():
+        return json.loads(path.read_text(encoding="utf-8"))
+    path = Path(results) / "campaign_manifest.json"
+    if not path.is_file():
+        raise ValueError("Import the 800-candidate ZIP with scripts/import_results.py, "
+                         "or pass --results with a completed 800-candidate campaign.")
+    manifest = json.loads(path.read_text(encoding="utf-8"))
+    return manifest["settings"]
+
+
+def require(condition, message):
+    if not condition:
+        raise ValueError(message)
+
+
+def validate_numeric(frames, results):
+    info = load_manifest(results)
+    protocol = info["protocol"]
+    require(protocol["max_moves_per_iteration"] == 800 and protocol["num_runs"] == 5
+            and protocol["solver_kwargs"]["max_iter"] == 100,
+            "Expected the 800-candidate, five-start, 100-iteration protocol")
+    for name, field in [("tabu_search.py", "search_sha256"), ("frvcp_dwc.py", "charging_sha256")]:
+        require(normalized_hash(ROOT / "src/evrp_dwc" / name) == protocol[field],
+                f"Source hash mismatch: {name}")
+    names = {p.name for p in BENCHMARK_XML_DIR.glob("*.xml")}
+    require(len(names) == 60 and set(info["input_sha256"]) == names,
+            "Expected the same 60 benchmark XML files")
+    for name, digest in info["input_sha256"].items():
+        actual = hashlib.sha256((BENCHMARK_XML_DIR / name).read_bytes()).hexdigest()
+        require(actual == digest, f"Input hash mismatch: {name}")
+    baseline = frames["no_wireless_baseline"]
+    sizes = baseline.set_index("instance").n_customers.to_dict()
+    expected = {
+        "no_wireless_baseline": {(n, 0., 0., 20240528, 20240528, "baseline") for n in names},
+        "multiseed_replication": {(n, g, .9, seed, 20240528, "baseline")
+            for n in names for g in [.1, .2, .3] for seed in range(20240528, 20240533)},
+        "omega_sensitivity": {(n, g, w, 20240528, 20240528, "baseline")
+            for n in names for g in [.1, .2, .3] for w in [.3, .5, .7, .9]},
+        "ablation_frvcp": {(n, .1, .9, 20240528, 20240528, v)
+            for n in names for v in ["baseline"] + ALL_VARIANTS
+            if v not in {"no_candidate_filtering", "no_filter_no_extended"} or sizes.get(n) == 40},
+    }
+    for label, frame in frames.items():
+        cols = PAIR_KEYS + ["ablation"]
+        actual = set(frame[cols].itertuples(index=False, name=None))
+        require(actual == expected[label] and not frame.duplicated(cols).any(),
+                f"{label}: incomplete or duplicate experimental grid")
+        require(frame.error.isna().all(), f"{label}: failed solves")
+        columns = ["best_cost", "vehicles", "solver_time_sec", "frvcp_calls",
+                   "frvcp_total_time_sec", "frvcp_avg_time_ms"]
+        require(np.isfinite(frame[columns].to_numpy(float)).all(), f"{label}: non-finite results")
+        require((frame.best_cost > 0).all() and (frame.vehicles >= 1).all()
+                and (frame.frvcp_calls > 0).all() and (frame.solver_time_sec >= 0).all(),
+                f"{label}: invalid cost, fleet, runtime or call count")
+        for column, value in [("num_runs", 5), ("starts_completed", 5), ("max_iter", 100),
+                              ("max_moves_per_iteration", 800), ("neighbor_list_size", 20)]:
+            require(frame[column].eq(value).all(), f"{label}: inconsistent {column}")
+        require(frame.iterations_done.between(0, 500).all(), f"{label}: iteration budget exceeded")
+        require(np.allclose(frame.frvcp_avg_time_ms,
+                    1000 * frame.frvcp_total_time_sec / frame.frvcp_calls, atol=1e-8, rtol=1e-8),
+                f"{label}: inconsistent FRVCP timings")
+        require(frame.use_shaking.eq(~frame.ablation.eq("no_shaking")).all(),
+                f"{label}: incorrect shaking flag")
+        filtering = (frame.n_customers > 20) & ~frame.ablation.isin(
+            ["no_candidate_filtering", "no_filter_no_extended"])
+        require(frame.use_candidate_lists.eq(filtering).all(), f"{label}: incorrect filtering flag")
+        require(frame.use_extended_operators.eq(~frame.ablation.isin(
+            ["no_extended_operators", "no_filter_no_extended"])).all(),
+            f"{label}: incorrect extended-operator flag")
+        if "protocol_json" in frame:
+            for row in frame.itertuples(index=False):
+                settings = json.loads(row.protocol_json)
+                require(object_hash(settings) == row.protocol_id,
+                        f"{row.instance}: protocol fingerprint mismatch")
+                require(settings["search_sha256"] == protocol["search_sha256"]
+                        and settings["charging_sha256"] == protocol["charging_sha256"]
+                        and settings["max_moves_per_iteration"] == 800
+                        and settings["num_runs"] == 5,
+                        f"{row.instance}: mixed protocol/source versions")
+                require(row.input_sha256 == info["input_sha256"][row.instance],
+                        f"{row.instance}: mixed input versions")
+    check_result_versions(*frames.values())
+    starts = load_starts(results, frames["ablation_frvcp"])
+    require(not starts.duplicated(START_KEYS + ["ablation"]).any(), "Duplicate start records")
+    require(np.isfinite(starts.best_cost).all() and (starts.best_cost > 0).all(), "Invalid start costs")
+    solve_keys = PAIR_KEYS + ["ablation"]
+    groups = starts.groupby(solve_keys)
+    require(len(starts) == 1100 and len(groups) == 220, "Incomplete ablation starts")
+    for key, group in groups:
+        base_seed = key[4]
+        seeds = [int.from_bytes(hashlib.sha256(f"tabu|{base_seed}|{i}".encode()).digest()[:8], "big") % (2**32)
+                 for i in range(5)]
+        require(group.sort_values("start_index").start_seed.tolist() == seeds
+                and set(group.start_index) == set(range(5)), f"{key}: wrong start seeds")
+    best = groups.best_cost.min().rename("start_min").reset_index()
+    matched = frames["ablation_frvcp"].merge(best, on=solve_keys, validate="one_to_one")
+    require(len(matched) == 220 and np.allclose(matched.best_cost, matched.start_min, atol=1e-9, rtol=0),
+            "Best-of-five costs disagree with individual starts")
+    overlap = frames["multiseed_replication"].query("placement_seed == 20240528").merge(
+        frames["omega_sensitivity"].query("omega == 0.9"), on=solve_keys,
+        suffixes=("_placement", "_intensity"), validate="one_to_one")
+    require(len(overlap) == 180 and np.allclose(overlap.best_cost_placement, overlap.best_cost_intensity,
+                atol=1e-9, rtol=0) and overlap.vehicles_placement.eq(overlap.vehicles_intensity).all(),
+            "Repeated placement/intensity settings disagree")
+    overlap = frames["ablation_frvcp"].query("ablation == 'baseline'").merge(
+        frames["omega_sensitivity"].query("coverage == 0.1 and omega == 0.9"),
+        on=solve_keys, suffixes=("_ablation", "_intensity"), validate="one_to_one")
+    require(len(overlap) == 60 and np.allclose(overlap.best_cost_ablation, overlap.best_cost_intensity,
+                atol=1e-9, rtol=0), "Full ablation disagrees with the matching intensity setting")
+    print("Verified 1,900 solves, 1,100 ablation starts, source/input hashes and matched settings.")
+    return starts
+
+
+def verify_results(results=RESULTS, replay=False, check_overlays=False):
     results = Path(results)
-    frames = {name: pd.read_csv(results / name / filename)
-              for name, filename in FILES.items()}
-    with contextlib.ExitStack() as stack:
-        archive_path = results / "case_details.zip"
-        details = stack.enter_context(zipfile.ZipFile(archive_path)) if archive_path.is_file() else None
-        replay = validate(frames, results, details)
-    verify_wireless_overlay_files(frames["multiseed_replication"], frames["omega_sensitivity"])
-    return frames, replay
+    frames = {name: pd.read_csv(results / name / filename) for name, filename in FILES.items()}
+    for frame in frames.values():
+        frame["coverage_pct"] = frame.coverage.map(lambda x: f"{100*x:g}%")
+    validate_numeric(frames, results)
+    checked_plans = pd.DataFrame()
+    if replay:
+        required = {"routes_json", "charging_plans_json", "start_results_json", "protocol_json"}
+        require(all(required <= set(frame.columns) for frame in frames.values()),
+                "This compact export has no route/charging plans. Supply a full campaign for --replay-plans.")
+        with contextlib.ExitStack() as stack:
+            path = results / "case_details.zip"
+            archive = stack.enter_context(zipfile.ZipFile(path)) if path.is_file() else None
+            checked_plans = replay_plans(frames, results, archive)
+    else:
+        print("Numeric verification only; route and charging-plan feasibility was not replayed.")
+    if check_overlays:
+        verify_wireless_overlay_files(frames["multiseed_replication"], frames["omega_sensitivity"])
+    return frames, checked_plans
 
 
 if __name__ == "__main__":
-    frames, replay = verify_results()
+    parser = argparse.ArgumentParser(description="Check the reported 800-candidate campaign.")
+    parser.add_argument("--results", type=Path, default=RESULTS)
+    parser.add_argument("--replay-plans", action="store_true")
+    parser.add_argument("--check-overlays", action="store_true")
+    args = parser.parse_args()
+    frames, replay = verify_results(args.results, args.replay_plans, args.check_overlays)
     baseline = frames["no_wireless_baseline"]
     for name, key in [("multiseed_replication", "coverage_pct"), ("omega_sensitivity", "omega")]:
         data = add_baseline_reductions(frames[name], baseline)

@@ -5,6 +5,14 @@ import pandas as pd
 from scipy.stats import t
 
 
+PAIR_KEYS = ["instance", "coverage", "omega", "placement_seed", "solver_seed"]
+START_KEYS = PAIR_KEYS + ["start_index", "start_seed"]
+ABLATION_METRICS = {
+    "best_cost": "cost", "vehicles": "vehicles", "solver_time_sec": "time",
+    "frvcp_calls": "calls", "frvcp_avg_time_ms": "call_ms",
+}
+
+
 def instance_summary(frame, value="reduction_pct"):
     """Student-t CI of equally weighted instance means (not independent runs).
 
@@ -82,3 +90,53 @@ def ablation_summary(frame):
     if "campaign_id" in data and data["campaign_id"].nunique() == 1:
         summary["campaign_id"] = data["campaign_id"].iloc[0]
     return summary.sort_values("ablation")
+
+
+def pair_ablation(frame, keys=PAIR_KEYS):
+    full = frame[frame.ablation.eq("baseline")]
+    variants = frame[~frame.ablation.eq("baseline")]
+    if full.duplicated(keys).any() or variants.duplicated(keys + ["ablation"]).any():
+        raise ValueError("Duplicate ablation pairs")
+    paired = variants.merge(full, on=keys, suffixes=("", "_full"),
+                            how="left", validate="many_to_one", indicator=True)
+    if not paired["_merge"].eq("both").all():
+        raise ValueError("Ablation variant has no matched Full result")
+    if (paired.best_cost_full <= 0).any():
+        raise ValueError("Full cost must be positive")
+    paired["cost_change_pct"] = 100 * (paired.best_cost / paired.best_cost_full - 1)
+    paired["cost_difference"] = paired.best_cost - paired.best_cost_full
+    return paired.drop(columns="_merge")
+
+
+def matched_ablation_summary(raw, starts):
+    paired = pair_ablation(raw)
+    start_pairs = pair_ablation(starts, START_KEYS)
+    rows = []
+    for variant, group in paired.groupby("ablation", sort=True):
+        per_start = start_pairs[start_pairs.ablation.eq(variant)]
+        if len(per_start) != 5 * len(group):
+            raise ValueError(f"{variant}: expected five matched starts per solve")
+        row = dict(setting=variant, n_overlap=len(group),
+                   n_start_pairs=len(per_start),
+                   delta_cost_start_pct=float(per_start.cost_change_pct.mean()),
+                   full_wins=int((group.cost_difference > 1e-6).sum()),
+                   ties=int((group.cost_difference.abs() <= 1e-6).sum()),
+                   variant_wins=int((group.cost_difference < -1e-6).sum()))
+        for column, label in ABLATION_METRICS.items():
+            if (group[column + "_full"] <= 0).any():
+                raise ValueError(f"Nonpositive Full denominator for {column}")
+            row[f"delta_{label}_pct"] = float(
+                (100 * (group[column] / group[column + "_full"] - 1)).mean())
+        rows.append(row)
+    return pd.DataFrame(rows)
+
+
+def start_ablation_summary(starts):
+    paired = pair_ablation(starts, START_KEYS)
+    return paired.groupby("ablation", as_index=False).agg(
+        n_start_pairs=("start_seed", "size"), n_instances=("instance", "nunique"),
+        delta_cost_start_pct=("cost_change_pct", "mean"),
+        full_wins=("cost_difference", lambda x: int((x > 1e-6).sum())),
+        ties=("cost_difference", lambda x: int((x.abs() <= 1e-6).sum())),
+        variant_wins=("cost_difference", lambda x: int((x < -1e-6).sum())))
+

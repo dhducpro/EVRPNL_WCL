@@ -8,7 +8,7 @@ This module contains all the core components for solving FRVCP using Tabu Search
 - Tabu search algorithm
 
 Search updates:
-- Deduplicate resulting solutions before neighborhood sampling.
+- Sample directly from generated moves without pre-sampling deduplication.
 - Verify each shake candidate with the exact route evaluator before accepting it.
 - Configure candidate-list size without rebuilding neighbor maps in the notebook.
 - Use inter-route relocate/cross/exchange for shaking by default, following the
@@ -650,28 +650,8 @@ def canonical_solution_signature(routes: Sequence[Sequence[int]]) -> Tuple[Tuple
     return tuple(sorted(tuple(route) for route in routes if route))
 
 
-def changing_moves(moves: List[Move], routes: Sequence[Sequence[int]]) -> List[Move]:
-    """Exclude unchanged solutions, including permutations of identical vehicles."""
-    current = canonical_solution_signature(routes)
-    return [move for move in moves if canonical_solution_signature(move.routes) != current]
-
-
-def deduplicate_moves(moves: List[Move]) -> List[Move]:
-    """Keep the first move for each distinct resulting routing solution.
-
-    Vehicle order and empty slots do not distinguish solutions, but customer
-    order within a route does: DWC energies need not be symmetric. In particular,
-    do not identify a route with its reversal. Keeping the first occurrence also
-    preserves deterministic operator order before random subsampling.
-    """
-    seen: Set[Tuple[Tuple[int, ...], ...]] = set()
-    unique: List[Move] = []
-    for move in moves:
-        signature = canonical_solution_signature(move.routes)
-        if signature not in seen:
-            seen.add(signature)
-            unique.append(move)
-    return unique
+# Up-front move filtering and deduplication intentionally disabled.
+# Only the original canonical solution signature for shake-cycle avoidance remains.
 
 
 def subsample_moves(moves: List[Move], max_moves: int, rng: random.Random) -> List[Move]:
@@ -704,7 +684,7 @@ class TabuSearch:
         neighbor_map: Optional[Dict[int, List[int]]] = None,
         use_candidate_lists: bool = False,
         use_extended_operators: bool = False,
-        max_moves_per_iter: int = 1000,
+        max_moves_per_iter: int = 800,
         shake_steps: int = 1,
         max_shake_trials: int = 10,
         candidate_list_size: Optional[int] = None,
@@ -770,12 +750,10 @@ class TabuSearch:
                 or_opt_moves = generate_or_opt_moves(routes, max_length=3)
             moves += or_opt_moves + generate_intra_2opt_moves(routes) + generate_intra_swap_moves(routes)
 
-        moves = changing_moves(moves, routes)
-        before_deduplication = len(moves)
-        moves = deduplicate_moves(moves)
-        self.stats["moves_before_deduplication"] += before_deduplication
+        # No global changing-move or deduplication pass before sampling.
+        # Retain counters for the original experiment schema: nothing is removed.
+        self.stats["moves_before_deduplication"] += len(moves)
         self.stats["moves_before_sampling"] += len(moves)
-        self.stats["moves_duplicates_removed"] += before_deduplication - len(moves)
         if self.max_moves_per_iter > 0:
             moves = subsample_moves(moves, self.max_moves_per_iter, self.rng)
         return moves
@@ -785,7 +763,7 @@ class TabuSearch:
         moves = generate_relocate_moves(routes) + generate_cross_moves(routes) + generate_exchange_moves(routes)
         if self.use_extended_operators:
             moves += generate_or_opt_moves(routes, max_length=3) + generate_intra_2opt_moves(routes) + generate_intra_swap_moves(routes)
-        return deduplicate_moves(changing_moves(moves, routes))
+        return moves
 
     def _generate_shake_moves(self, routes: List[List[int]]) -> List[Move]:
         """Build the perturbation neighborhood independently of local search.
@@ -802,7 +780,7 @@ class TabuSearch:
             + generate_cross_moves(routes)
             + generate_exchange_moves(routes)
         )
-        return deduplicate_moves(changing_moves(moves, routes))
+        return moves
 
     def _shake(
         self,
@@ -900,6 +878,11 @@ class TabuSearch:
             for move in moves:
                 candidate_routes = ensure_empty_slot(move.routes)
 
+                # Lazy safety guard (up to 800 sampled moves), not a global
+                # pre-sampling move filter. This avoids selecting a no-op move.
+                if candidate_routes == current_routes:
+                    self.stats["moves_skipped_validity"] += 1
+                    continue
                 if not quick_solution_check(candidate_routes, self.required_customers, self.cache):
                     self.stats["moves_skipped_validity"] += 1
                     continue

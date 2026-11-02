@@ -12,7 +12,8 @@ import seaborn as sns
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 from evrp_dwc.result_statistics import grouped_instance_summary, add_baseline_reductions
-RESULTS = ROOT / "result"
+from evrp_dwc.paths import RESULTS_RAW_DIR
+RESULTS = RESULTS_RAW_DIR
 OUT_DIR = ROOT / "figures"
 
 def save_figure(fig, name: str) -> None:
@@ -237,6 +238,8 @@ def render_main_figures(multiseed, omega, output_dir):
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     sns.set_theme(style="whitegrid", context="talk")
     np.random.seed(20240528)
+    multiseed = multiseed.assign(coverage_pct=multiseed.coverage.map(lambda x: f"{100*x:g}%"))
+    omega = omega.assign(coverage_pct=omega.coverage.map(lambda x: f"{100*x:g}%"))
     base = omega[["instance", "base_cost", "base_vehicles"]].drop_duplicates()
     if base["instance"].duplicated().any():
         raise ValueError("Inconsistent matched baseline")
@@ -250,12 +253,15 @@ def render_main_figures(multiseed, omega, output_dir):
 
 
 if __name__ == "__main__":
+    from verify_key_results import verify_results
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--results", type=Path, default=RESULTS)
     parser.add_argument("--output", type=Path, default=OUT_DIR)
     args = parser.parse_args()
-    baseline = pd.read_csv(args.results / "no_wireless_baseline/no_wireless_all.csv")
-    multiseed = add_baseline_reductions(pd.read_csv(args.results / "multiseed_replication/multiseed_all.csv"), baseline)
-    omega = add_baseline_reductions(pd.read_csv(args.results / "omega_sensitivity/omega_sensitivity_all.csv"), baseline)
+    frames, _ = verify_results(args.results)
+    baseline = frames["no_wireless_baseline"]
+    multiseed = add_baseline_reductions(frames["multiseed_replication"], baseline)
+    omega = add_baseline_reductions(frames["omega_sensitivity"], baseline)
     render_main_figures(multiseed, omega, args.output)
     print("Updated the four manuscript figures using their original style.")
+

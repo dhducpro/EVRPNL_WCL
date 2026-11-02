@@ -2,24 +2,15 @@ from pathlib import Path
 import argparse
 import sys
 
-import numpy as np
 import pandas as pd
-from scipy.stats import t
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
-from evrp_dwc.result_statistics import add_baseline_reductions, instance_summary, ablation_summary
-from verify_key_results import verify_results, RESULTS, VARIANTS, PAIR_KEYS
-
-
-def paired_summary(group, column):
-    values = group[column].astype(float)
-    return {
-        "mean": float(values.mean()),
-        "ci95": float(
-            t.ppf(0.975, len(values) - 1) * values.std(ddof=1) / np.sqrt(len(values))
-        ),
-    }
+from evrp_dwc.result_statistics import (
+    add_baseline_reductions, instance_summary, ablation_summary,
+    matched_ablation_summary, start_ablation_summary,
+)
+from verify_key_results import verify_results, load_starts, RESULTS, VARIANTS
 
 def stats_table(frame, keys):
     rows = []
@@ -36,39 +27,6 @@ def stats_table(frame, keys):
             )
         )
     return pd.DataFrame(rows)
-
-def matched_ablation_table(raw):
-    full = raw[raw.ablation.eq("baseline")]
-    summaries = []
-    metrics = {
-        "best_cost": "cost",
-        "vehicles": "vehicles",
-        "solver_time_sec": "time",
-        "frvcp_calls": "calls",
-        "frvcp_avg_time_ms": "call_ms",
-    }
-    for variant in VARIANTS:
-        m = raw[raw.ablation.eq(variant)].merge(
-            full, on=PAIR_KEYS, suffixes=("", "_full"), validate="one_to_one"
-        )
-        m["cost_change_pct"] = 100 * (m.best_cost / m.best_cost_full - 1)
-        m["full_win"] = m.best_cost_full < m.best_cost - 1e-6
-        m["variant_win"] = m.best_cost_full > m.best_cost + 1e-6
-        m["tie"] = ~(m.full_win | m.variant_win)
-        summary = dict(
-            setting=variant,
-            n_overlap=len(m),
-            **paired_summary(m, "cost_change_pct"),
-            full_wins=int(m.full_win.sum()),
-            ties=int(m.tie.sum()),
-            variant_wins=int(m.variant_win.sum()),
-        )
-        for metric, label in metrics.items():
-            summary["delta_" + label + "_pct"] = 100 * (
-                m[metric].mean() / m[metric + "_full"].mean() - 1
-            )
-        summaries.append(summary)
-    return pd.DataFrame(summaries)
 
 def make_tables(results, output):
     frames, replay = verify_results(results)
@@ -109,23 +67,30 @@ def make_tables(results, output):
         )
     validation = pd.DataFrame(vrows)
     coverage = stats_table(multi, ["coverage"])
+    coverage = pd.concat([coverage, pd.DataFrame([dict(
+        coverage="Overall", **instance_summary(multi), min_pct=multi.reduction_pct.min(),
+        max_pct=multi.reduction_pct.max(), fleet_reduction_rate_pct=100 * multi.fleet_reduced.mean(),
+        non_deteriorating=int(multi.non_deteriorating.sum()))])], ignore_index=True)
     sizecov = stats_table(multi, ["n_customers", "coverage"])
     intensity = stats_table(omega, ["omega"])
-    ablation = matched_ablation_table(frames["ablation_frvcp"])
+    starts = load_starts(results, frames["ablation_frvcp"])
+    ablation = matched_ablation_summary(frames["ablation_frvcp"], starts)
+    main_ablation = ablation.set_index("setting").loc[VARIANTS].reset_index()
     full = frames["ablation_frvcp"].query("ablation == 'baseline'")
     scalability = full.groupby("n_customers", as_index=False).agg(
         instances=("instance", "count"),
         mean_time_sec=("solver_time_sec", "mean"),
         mean_frvcp_calls=("frvcp_calls", "mean"),
         mean_frvcp_call_ms=("frvcp_avg_time_ms", "mean"),
-        mean_search_calls_per_iteration=("frvcp_search_calls_per_iteration", "mean"),
     )
     outputs = {
         "table_validation": validation,
         "table_multiseed_coverage": coverage,
         "table_multiseed_by_size_coverage": sizecov,
         "table_omega_sensitivity": intensity,
-        "table_ablation_matched_deltas": ablation,
+        "table_ablation_matched_deltas": main_ablation,
+        "table_ablation_all_variants": ablation,
+        "table_ablation_per_start": start_ablation_summary(starts),
         "table_scalability": scalability,
         "table_ablation_summary": ablation_summary(frames["ablation_frvcp"]),
     }
@@ -141,3 +106,4 @@ if __name__ == "__main__":
     parser.add_argument("--output", type=Path, default=ROOT)
     args = parser.parse_args()
     make_tables(args.results.resolve(), args.output.resolve())
+
