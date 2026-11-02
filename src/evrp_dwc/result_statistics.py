@@ -73,7 +73,7 @@ def add_baseline_reductions(frame, baseline):
 
 
 def ablation_summary(frame):
-    """Recompute the published summary from raw runs instead of trusting a CSV."""
+    """Compute the published summary from individual run records."""
     if frame.empty or ("error" in frame and frame["error"].notna().any()):
         raise ValueError("Empty or failed ablation runs; resolve them before summarizing")
     check_result_versions(frame)

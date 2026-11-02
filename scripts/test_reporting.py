@@ -7,7 +7,10 @@ import unittest
 
 import pandas as pd
 
-from verify_key_results import FILES, RESULTS, validate_numeric, load_manifest, load_starts
+from verify_key_results import (
+    FILES, RESULTS, ROOT, validate_numeric, load_manifest, load_starts,
+    code_fingerprint, source_matches,
+)
 from evrp_dwc.result_statistics import (
     instance_summary, pair_ablation, matched_ablation_summary,
 )
@@ -42,6 +45,22 @@ class ReportingTests(unittest.TestCase):
                                   best_cost=[10., 11.]))
         with self.assertRaisesRegex(ValueError, 'no matched Full'):
             pair_ablation(frame, keys=['instance'])
+
+    def test_code_fingerprint_ignores_documentation(self):
+        source = '"""Module description."""\ndef objective(x):\n    """Cost."""\n    return x + 1\n'
+        documented = '# Routing objective\n' + source.replace('Cost.', 'Route cost.')
+        self.assertEqual(code_fingerprint(source), code_fingerprint(documented))
+        self.assertNotEqual(code_fingerprint(source), code_fingerprint(source.replace('x + 1', 'x + 2')))
+
+    def test_distribution_source_rejects_logic_changes(self):
+        records = json.loads((ROOT / 'data/source_fingerprints.json').read_text(encoding='utf-8'))
+        for name, record in records.items():
+            source_path = ROOT / 'src/evrp_dwc' / name
+            self.assertTrue(source_matches(source_path, record['campaign_sha256']))
+            with tempfile.TemporaryDirectory() as directory:
+                path = Path(directory) / name
+                path.write_text(source_path.read_text(encoding='utf-8') + '\nraise RuntimeError("changed logic")\n', encoding='utf-8')
+                self.assertFalse(source_matches(path, record['campaign_sha256']))
 
     @unittest.skipUnless((RESULTS / 'run_info.json').is_file(), 'Import the result ZIP first')
     def test_ablation_pair_counts(self):

@@ -35,7 +35,7 @@ def import_results(archive_path, output=RESULTS):
                 path.parent.mkdir(parents=True, exist_ok=True)
                 path.write_bytes(archive.read(candidates[0]))
         verify_results(staged)
-        # Keep previous results and their plan archive together before replacement.
+        # Archive result files and associated plans before importing.
         existing = [name for name in FILES.values() if (output / name).is_file()]
         if (output / "case_details.zip").is_file():
             existing.append("case_details.zip")

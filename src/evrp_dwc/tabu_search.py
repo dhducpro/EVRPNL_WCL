@@ -7,23 +7,15 @@ This module contains all the core components for solving FRVCP using Tabu Search
 - Move generation operators
 - Tabu search algorithm
 
-Search updates:
-- Sample directly from generated moves without pre-sampling deduplication.
-- Verify each shake candidate with the exact route evaluator before accepting it.
-- Configure candidate-list size without rebuilding neighbor maps in the notebook.
-- Use inter-route relocate/cross/exchange for shaking by default, following the
-  perturbation neighborhood in Section 6.5 of Liang, Dabia and Luo (2021),
-  https://arxiv.org/abs/2108.01273. Main-search extended operators are unchanged.
+Candidate moves are sampled directly from the generated neighborhood.
+Shaking uses inter-route relocate, cross and exchange moves, following the
+perturbation neighborhood in Section 6.5 of Liang, Dabia and Luo (2021),
+https://arxiv.org/abs/2108.01273. Each perturbation is evaluated by FRVCP.
 
-This adapts the shaking neighborhood, not the complete Algorithm 3: the existing
-stagnation reset, fixed tabu tenure, exact FRVCP evaluation, and multi-start
-protocol are retained. Set shake_inter_route_only=False to recover the previous
-all-operator shaking neighborhood for comparison.
-
-Existing calls remain valid. For a tuning experiment, pass candidate_list_size=15
-and/or shake_steps=2 through multi_start_tabu_search. These are trial settings,
-not a claim of improved benchmark performance. Leave candidate_list_size=None
-to retain the supplied neighbor map and its size; shake_steps still defaults to 1.
+The search uses fixed tabu tenure and multiple randomized starts.
+candidate_list_size controls neighbor-map size; shake_steps controls the
+perturbation depth. Set shake_inter_route_only=False to use all enabled
+operators during shaking.
 """
 
 import copy
@@ -37,12 +29,6 @@ from dataclasses import dataclass
 from typing import Any, Dict, List, Optional, Sequence, Set, Tuple
 
 from .frvcp_dwc import DwcEnergyBounds, DwcFrvcpSolver
-
-# Note: These imports assume the existence of 'core' and 'solver' modules
-# Users should ensure these are available in their environment
-# import core
-# import solver
-
 
 # Constants
 DEPOT_ID = 0
@@ -90,7 +76,7 @@ class RouteEvaluationCache:
         self.charging_station_ids = [
             node.node_id
             for node in self.instance.nodes_g
-            if node.type.name == 'CHARGING_STATION'  # Adjust based on actual core.NodeType implementation
+            if node.type.name == 'CHARGING_STATION'
         ]
         self._energy_path_cache: Dict[Tuple[int, int], bool] = {}
         self._cache: Dict[Tuple[int, ...], Tuple[float, Optional[List[Tuple[int, Optional[float]]]]]] = {}
@@ -650,10 +636,6 @@ def canonical_solution_signature(routes: Sequence[Sequence[int]]) -> Tuple[Tuple
     return tuple(sorted(tuple(route) for route in routes if route))
 
 
-# Up-front move filtering and deduplication intentionally disabled.
-# Only the original canonical solution signature for shake-cycle avoidance remains.
-
-
 def subsample_moves(moves: List[Move], max_moves: int, rng: random.Random) -> List[Move]:
     if len(moves) <= max_moves:
         return moves
@@ -696,8 +678,7 @@ class TabuSearch:
         self.current_tabu_tenure = self.base_tabu_tenure
         self.max_iter = max_iter
         self.shake_tenure = shake_tenure
-        # Kept for backward-compatibility with existing notebooks/configs.
-        # Tenure adaptation is disabled; tenure remains fixed at base_tabu_tenure.
+        # Tabu tenure is fixed at base_tabu_tenure.
         self.shake_iter = shake_iter
         self.opt_iter = opt_iter
         self.phi = max(0.1, min(phi, 0.99))
@@ -714,8 +695,7 @@ class TabuSearch:
                 )
         self.candidate_list_size = candidate_list_size
         self.max_moves_per_iter = max_moves_per_iter
-        # Paper pseudocode does not specify multi-step perturbation depth.
-        # Use a single random perturbation move by default.
+        # A perturbation consists of shake_steps feasible random moves.
         self.shake_steps = max(1, int(shake_steps))
         if isinstance(max_shake_trials, bool) or not isinstance(max_shake_trials, int) or max_shake_trials < 1:
             raise ValueError("max_shake_trials must be a positive integer")
@@ -750,8 +730,7 @@ class TabuSearch:
                 or_opt_moves = generate_or_opt_moves(routes, max_length=3)
             moves += or_opt_moves + generate_intra_2opt_moves(routes) + generate_intra_swap_moves(routes)
 
-        # No global changing-move or deduplication pass before sampling.
-        # Retain counters for the original experiment schema: nothing is removed.
+        # Count generated moves before random sampling.
         self.stats["moves_before_deduplication"] += len(moves)
         self.stats["moves_before_sampling"] += len(moves)
         if self.max_moves_per_iter > 0:
@@ -825,9 +804,8 @@ class TabuSearch:
             if not moved:
                 break
 
-        # If a later perturbation step fails, retain the last feasible step.
-        # Keep the historical `shakes` counter as calls made by run(); only
-        # `shakes_successful` counts calls that actually change the solution.
+        # Return the last feasible perturbation step.
+        # `shakes` counts calls; `shakes_successful` counts changed solutions.
         if canonical_solution_signature(shaken_routes) != original_signature:
             self.stats["shakes_successful"] += 1
         return shaken_routes, cost, details
@@ -878,8 +856,7 @@ class TabuSearch:
             for move in moves:
                 candidate_routes = ensure_empty_slot(move.routes)
 
-                # Lazy safety guard (up to 800 sampled moves), not a global
-                # pre-sampling move filter. This avoids selecting a no-op move.
+                # Skip sampled moves that leave the current routes unchanged.
                 if candidate_routes == current_routes:
                     self.stats["moves_skipped_validity"] += 1
                     continue

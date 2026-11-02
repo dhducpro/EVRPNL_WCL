@@ -1,11 +1,13 @@
 from pathlib import Path
 import argparse
+import ast
 import contextlib
 import hashlib
 import io
 import json
 import random
 import sys
+import tokenize
 import zipfile
 
 import numpy as np
@@ -34,6 +36,39 @@ PAIR_KEYS = ["instance", "coverage", "omega", "placement_seed", "solver_seed"]
 def normalized_hash(path):
     source = Path(path).read_text(encoding="utf-8")
     return hashlib.sha256(source.encode()).hexdigest()
+
+
+def code_fingerprint(source):
+    """Hash Python tokens independently of comments and docstrings."""
+    tree = ast.parse(source)
+    docstrings = set()
+    for node in ast.walk(tree):
+        if isinstance(node, (ast.Module, ast.ClassDef, ast.FunctionDef, ast.AsyncFunctionDef)):
+            if (node.body and isinstance(node.body[0], ast.Expr)
+                    and isinstance(node.body[0].value, ast.Constant)
+                    and isinstance(node.body[0].value.value, str)):
+                docstrings.add((node.body[0].lineno, node.body[0].col_offset))
+    ignored = {tokenize.COMMENT, tokenize.NL, tokenize.NEWLINE, tokenize.ENDMARKER}
+    tokens = [(tokenize.tok_name[token.type],
+               "" if token.type in {tokenize.INDENT, tokenize.DEDENT} else token.string)
+              for token in tokenize.generate_tokens(io.StringIO(source).readline)
+              if token.type not in ignored and token.start not in docstrings]
+    return object_hash(tokens)
+
+
+def source_matches(path, campaign_sha256):
+    """Match campaign source or its documented distribution fingerprint."""
+    actual = normalized_hash(path)
+    if actual == campaign_sha256:
+        return True
+    fingerprints = ROOT / "data/source_fingerprints.json"
+    if not fingerprints.is_file():
+        return False
+    record = json.loads(fingerprints.read_text(encoding="utf-8")).get(Path(path).name, {})
+    return (record.get("campaign_sha256") == campaign_sha256
+            and record.get("distribution_sha256") == actual
+            and record.get("code_sha256") == code_fingerprint(
+                Path(path).read_text(encoding="utf-8")))
 
 
 def object_hash(value):
@@ -197,7 +232,7 @@ def verify_wireless_overlay_files(multiseed, omega, wireless_dir=None):
         raise ValueError("Invalid energy values/intensities")
     expected = energy["base_energy_wh"] * (1 - energy["omega"])
     if not np.allclose(energy["reduced_energy_wh"], expected, rtol=1e-10, atol=1e-7):
-        raise ValueError("Overlay violates E_dwc = (1 - omega) E_base; regenerate old floor-based files")
+        raise ValueError("Overlay violates E_dwc = (1 - omega) E_base; regenerate overlay files")
     if not np.allclose(energy["energy_reduction_wh"], energy["base_energy_wh"] - expected, rtol=1e-10, atol=1e-7):
         raise ValueError("Incorrect energy_reduction_wh")
     # Independently recompute physical base energy from the benchmark XML.
@@ -269,7 +304,7 @@ def validate_numeric(frames, results):
             and protocol["solver_kwargs"]["max_iter"] == 100,
             "Expected the 800-candidate, five-start, 100-iteration protocol")
     for name, field in [("tabu_search.py", "search_sha256"), ("frvcp_dwc.py", "charging_sha256")]:
-        require(normalized_hash(ROOT / "src/evrp_dwc" / name) == protocol[field],
+        require(source_matches(ROOT / "src/evrp_dwc" / name, protocol[field]),
                 f"Source hash mismatch: {name}")
     names = {p.name for p in BENCHMARK_XML_DIR.glob("*.xml")}
     require(len(names) == 60 and set(info["input_sha256"]) == names,

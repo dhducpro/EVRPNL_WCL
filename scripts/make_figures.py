@@ -1,4 +1,4 @@
-"""Render manuscript figures using the original plotting style and current data."""
+"""Render manuscript figures from experiment results."""
 from pathlib import Path
 import sys
 import argparse
@@ -263,5 +263,5 @@ if __name__ == "__main__":
     multiseed = add_baseline_reductions(frames["multiseed_replication"], baseline)
     omega = add_baseline_reductions(frames["omega_sensitivity"], baseline)
     render_main_figures(multiseed, omega, args.output)
-    print("Updated the four manuscript figures using their original style.")
+    print("Generated four manuscript figures.")
 

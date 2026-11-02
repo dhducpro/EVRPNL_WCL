@@ -1,6 +1,6 @@
 """FRVCP bounds for nonnegative DWC energies and metric travel times.
 
-The original arc energies remain the input to label propagation. Shortest-path
+Arc energies are the input to label propagation. Shortest-path
 energies are used only as optimistic pruning bounds, never as route costs or
 as permission to insert intermediate customers into a fixed route.
 """
@@ -129,8 +129,7 @@ class DwcFrvcpSolver(solver.Solver):
     def _compute_possible_cs_detour(
         self, max_detour_charge_time: float, only_one: bool = False
     ) -> list[list[bool]]:
-        # Retain the metric-time screen, without the original energy-based
-        # detour charging screen. CS-to-CS links still enforce multi_insert.
+        # Screen detours by metric travel time. CS-to-CS links enforce multi_insert.
         return super()._compute_possible_cs_detour(max_detour_charge_time, only_one=False)
 
     def _compute_bounds(self, nodes: list[Any]) -> tuple[list[float], ...]:
